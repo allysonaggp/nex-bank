@@ -1,73 +1,134 @@
-# 📌 Sistema de Usuários em Python + SQLite
+# 🏦 NexBank
 
-Este é um sistema de gerenciamento de usuários em **Python** utilizando **SQLite3** como banco de dados.  
-O sistema possui dois tipos de usuários: **administrador** e **usuário comum**.
+**NexBank** é um sistema bancário em **Python**, que simula funcionalidades de um banco real, incluindo cadastro, login, gerenciamento de usuários, transações financeiras e histórico de movimentações.
+
+O sistema utiliza **SQLite** para persistência de dados e implementa **hash de senhas** para segurança.
+
+---
 
 ## 🚀 Funcionalidades
 
-- [x] Cadastro de usuários
-- [x] Cadastro de administradores
-- [x] Login com autenticação
-- [x] Menu diferenciado para usuários e administradores
-- [x] Atualizar dados de cadastro
-- [x] Excluir conta
-- [x] Consultar usuários (apenas administradores)
-- [x] Listar todos os usuários cadastrados
-- [ ] Cadastro de notas (em desenvolvimento)
+### Para Usuários Comuns
 
-## 🛠️ Tecnologias utilizadas
+* ✅ Cadastro de conta com nome, e-mail e senha.
+* ✅ Login seguro com autenticação de senha.
+* ✅ Consultar saldo e crédito disponíveis.
+* ✅ Realizar transferências entre contas.
+* ✅ Consultar histórico de transações.
+* ✅ Atualizar dados pessoais.
+* ✅ Deletar a própria conta (saldo deve ser 0).
 
-- Python 3
-- SQLite3 (banco de dados nativo do Python)
-- Módulos padrão: `os`, `getpass`, `sqlite3`, `pathlib`
+### Para Administradores
+
+* ✅ Cadastrar usuários e administradores.
+* ✅ Consultar dados de qualquer usuário.
+* ✅ Atribuir saldo ou crédito a usuários.
+* ✅ Atualizar dados de usuários.
+* ✅ Deletar contas de usuários (verificando saldo/credito).
+* ✅ Visualizar todos os usuários cadastrados.
+
+---
 
 ## 📂 Estrutura do Projeto
 
 ```
-📦 sistema-usuarios
-├── dbapi.py        # Arquivo com todas as funções de banco de dados
-├── main.py         # Menu principal do sistema
-├── banco_de_dados.db # Banco de dados SQLite (gerado automaticamente)
-└── README.md
+NexBank/
+│
+├─ main.py            # Interface principal do usuário e menu
+├─ dbapi.py           # Funções de acesso ao banco de dados
+├─ utils.py           # Funções utilitárias (limpar tela, hash de senha)
+├─ banco_de_dados.db  # Banco de dados SQLite
+└─ README.md          # Este arquivo
 ```
-
-## ⚙️ Como executar
-
-1. Clone este repositório ou copie os arquivos para uma pasta local:
-
-   ```bash
-   git clone https://github.com/seuusuario/sistema-usuarios.git
-   cd sistema-usuarios
-   ```
-
-2. Execute o arquivo principal:
-
-   ```bash
-   python main.py
-   ```
-
-3. Use as opções do menu para **login** ou **cadastro**.
-
-## 🔑 Usuário Padrão
-
-Ao iniciar o sistema pela primeira vez, é criado automaticamente um administrador padrão:
-
-```
-Usuário: admin
-Email:   admin@gmail
-Senha:   admin
-```
-
-⚠️ **Recomenda-se trocar a senha após o primeiro acesso!**
-
-## 📌 Próximos Passos
-
-- Implementar criptografia de senha (`hashlib` ou `bcrypt`)
-- Melhorar validações de entrada
-- Criar testes automatizados
-- Implementar cadastro de notas
-- Futuramente: interface gráfica (Tkinter) ou web (Flask/Django)
 
 ---
 
-👨‍💻 Desenvolvido por **[Allyson Gonçalves]**
+## 🛠 Tecnologias
+
+* Python 3.x
+* SQLite
+* Biblioteca `hashlib` para hash de senhas
+
+---
+
+## ⚡ Como Rodar
+
+1. Clone o repositório:
+
+```bash
+git clone https://github.com/seu-usuario/NexBank.git
+```
+
+2. Acesse a pasta do projeto:
+
+```bash
+cd NexBank
+```
+
+3. Execute o arquivo principal:
+
+```bash
+python main.py
+```
+
+4. Use o menu para login, cadastro ou acessar funcionalidades de administrador.
+
+---
+
+## 🔒 Segurança
+
+* Senhas armazenadas em **hash SHA-256**, garantindo que não fiquem em texto plano no banco de dados.
+
+---
+
+## 🧑‍💻 Primeiro Administrador
+
+O primeiro administrador é criado automaticamente com os seguintes dados:
+
+* **Nome:** admin
+* **Email:** admin\@gmail
+* **Senha:** admin
+
+> ⚠️ Recomenda-se alterar a senha do administrador após o primeiro login.
+
+---
+
+## 📸 Exemplos de Telas
+
+### Menu Inicial
+
+```
+=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-
+               NexBank
+=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-
+[1] Login
+[2] Cadastro
+[0] Sair
+```
+
+### Tela de Usuário
+
+```
+Saldo: 100.00                   Conta N: 1
+Credito: 0.00
+Bem-vindo, João
+[1] Transações
+[2] Configurações
+[0] Sair
+```
+
+### Tela de Administrador
+
+```
+Bem-vindo, admin
+[1] Gerenciador de Usuários
+[2] Configurações
+[0] Sair
+```
+
+---
+
+## 📌 Observações
+
+* Para deletar uma conta, o saldo do usuário deve ser 0.
+* Apenas administradores podem acessar funções de gerenciamento de outros usuários.
