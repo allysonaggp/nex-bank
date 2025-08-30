@@ -1,6 +1,5 @@
 import sqlite3
 from pathlib import Path
-import os
 from utils import hash_senha, limpar_tela
 
 ROOT_PATH = Path(__file__).parent
