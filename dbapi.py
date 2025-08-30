@@ -1,16 +1,11 @@
 import sqlite3
 from pathlib import Path
 import os
-from utils import hash_senha
+from utils import hash_senha, limpar_tela
 
 ROOT_PATH = Path(__file__).parent
 conexao = sqlite3.connect(ROOT_PATH / "banco_de_dados.db")
 cursor = conexao.cursor()
-
-
-# Função limpar tela
-def limpar_tela():
-    os.system("cls" if os.name == "nt" else "clear")
 
 
 # Função que cria a tabela
@@ -102,6 +97,7 @@ def consultar_registros(nome):
         print("Usuario não encontrado")
 
 
+# Função consultar transaçoes
 def consultar_transacoes(usuario_id):
     cursor.execute(
         """
@@ -153,7 +149,9 @@ def voltar_menu_login():
 # Função para login de usuarios
 def login(nome, senha):
     senha_hash = hash_senha(senha)  # <-- aplica hash
-    cursor.execute("SELECT * FROM usuarios WHERE nome=? AND senha=?", (nome, senha_hash))
+    cursor.execute(
+        "SELECT * FROM usuarios WHERE nome=? AND senha=?", (nome, senha_hash)
+    )
     login = cursor.fetchone()
     if login is not None:
         # Menu Adminstrador
