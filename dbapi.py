@@ -42,7 +42,7 @@ def inserir_registro(nome, email, senha):
     cursor.execute("SELECT COUNT(id) FROM usuarios;")
     total_cadastrados = cursor.fetchone()[0]
 
-    if total_cadastrados <= 10:
+    if total_cadastrados > 1 and total_cadastrados <= 5:
         data = (nome, email, senha_hash, 100, 0, 0)
     else:
         data = (nome, email, senha_hash, 0, 0, 0)
@@ -58,12 +58,19 @@ def inserir_registro(nome, email, senha):
 # Função para cadastrar um administrador
 def inserir_registro_administrador(nome, email, senha):
     senha_hash = hash_senha(senha)
-    data = (nome, email, senha_hash, 1)
-    cursor.execute(
-        "INSERT INTO usuarios(nome,email,senha,privilegio) VALUES(?,?,?,?)", data
-    )
-    conexao.commit()
-    print(f"\nAdministrador cadastrado com sucesso!")
+    cursor.execute("SELECT COUNT(id) FROM usuarios;")
+    total_cadastrados = cursor.fetchone()[0]
+
+    if total_cadastrados == 0:
+
+        data = (nome, email, senha_hash, 1, 0, 0)
+        cursor.execute(
+            "INSERT INTO usuarios(nome,email,senha,privilegio,saldo,credito) VALUES(?,?,?,?,?,?)", data
+        )
+        conexao.commit()
+        print(f"\nAdministrador cadastrado com sucesso!")
+    else:
+        None
 
 
 # Função para inserir muitos registros de uma vez
@@ -77,7 +84,7 @@ def inserir_muitos(dados):
 def iniciar():
     criar_tabela_usuarios(conexao, cursor)
     criar_tabela_transacoes(conexao, cursor)
-    # inserir_registro_administrador("admin", "admin@gmail", "admin")
+    inserir_registro_administrador("admin", "admin@nexbank.com", "admin")
 
 
 # Função para atualizar dados
@@ -252,7 +259,7 @@ def login(nome, senha):
                         menu = msvcrt.getch().decode()
                         # Atualizar dados do usuario
                         if menu == "1":
-                            # Atribuir saldo ao usuario
+
                             def adicionar_saldo(saldo, id):
                                 data = (saldo, id)
                                 cursor.execute(
@@ -274,8 +281,9 @@ def login(nome, senha):
                             )
                             voltar_menu_login()
 
+                        # Atribuir credito ao usuario
                         if menu == "2":
-                            # Atribuir credito ao usuario
+
                             def adicionar_credito(credito, id):
                                 data = (credito, id)
                                 cursor.execute(
@@ -296,9 +304,10 @@ def login(nome, senha):
                                 usuario["id"],
                             )
                             voltar_menu_login()
-                        
+
+                        # Atualizar dados do usuario
                         if menu == "3":
-                            # Atualizar dados do usuario
+
                             def atualizar_registro_admin(
                                 nome, email, senha, privilegio, id
                             ):
@@ -329,8 +338,9 @@ def login(nome, senha):
                             )
                             voltar_menu_login()
 
+                        # Deletar conta do Usuário
                         if menu == "4":
-                            # Deletar conta do Usuário         
+
                             def deletar_registros(id):
                                 data = id
                                 cursor.execute(
@@ -363,6 +373,7 @@ def login(nome, senha):
                                 print("Opção invalida, tente de novo!")
 
                             voltar_menu_login()
+                        # Sair
                         if menu == 0:
                             voltar_menu_login()
                         else:
@@ -538,7 +549,7 @@ def login(nome, senha):
                         "\n[1] Transferência\n[2] Ver histórico de transações\n[0] Voltar ao menu principal\n"
                     )
                     menu_transacoes = msvcrt.getch().decode()
-
+                    # Transferência
                     if menu_transacoes == "1":
                         limpar_tela()
                         nome = "Transações"
@@ -578,12 +589,12 @@ def login(nome, senha):
                             print("Saldo insuficiente!")
 
                         voltar_menu_login()
-
+                    # Histórico de transações
                     if menu_transacoes == "2":
                         limpar_tela()
                         consultar_transacoes(login[0])
                         voltar_menu_login()
-
+                    # Sair
                     elif menu_transacoes == "0":
                         voltar_menu_login()
                     else:

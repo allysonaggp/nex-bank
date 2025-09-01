@@ -10,7 +10,7 @@ O sistema utiliza **SQLite** para persistência de dados e implementa **hash de 
 
 ### Para Usuários Comuns
 
-* ✅ Cadastro de conta com nome, e-mail e senha.
+* ✅ Cadastro de conta com nome, e-mail e senha(criptografada).
 * ✅ Login seguro com autenticação de senha.
 * ✅ Consultar saldo e crédito disponíveis.
 * ✅ Realizar transferências entre contas.
@@ -86,7 +86,7 @@ python main.py
 O primeiro administrador é criado automaticamente com os seguintes dados:
 
 * **Nome:** admin
-* **Email:** admin\@gmail
+* **Email:** admin\@nexbank.com
 * **Senha:** admin
 
 > ⚠️ Recomenda-se alterar a senha do administrador após o primeiro login.
