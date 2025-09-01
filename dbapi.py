@@ -184,17 +184,23 @@ def consultar_transacoes(usuario_id):
     transacoes = cursor.fetchall()
 
     if not transacoes:
+        nome = "Histórico de Transações:"
+        linha = "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+        print(linha)
+        print(f"{nome:^{len(linha)}}")
+        print(linha)
         print("\nNenhuma transação encontrada.\n")
     else:
         limpar_tela()
         nome = "Histórico de Transações:"
-        print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-        print(f"{nome:^42}")
-        print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+        linha = "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+        print(linha)
+        print(f"{nome:^{len(linha)}}")
+        print(linha)
         for t in transacoes:
             print(
                 f"ID: {t[0]} | Origem: {t[1]} | Destino: {t[2]} | Valor: {t[3]:.2f}\nTipo: {t[4]} | Data: {t[5]}\n"
-                "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+                
             )
 
 
