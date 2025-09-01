@@ -225,6 +225,8 @@ def login(nome, senha):
             while True:
                 limpar_tela()
                 cabecalho("Sistema Administrativo - NexBank")
+                print(f"Conta N: {login[0]} | Saldo: {login[5]:.2f} | Credito: {login[6]:.2f}")
+                linha()
                 print(f"\nBem vindo {login[1]}\n")
                 print("[1] Gerenciador de Usuários" "\n[2] Configuraçoes\n[0] Sair\n")
                 menu_principal_admin = msvcrt.getch().decode()
@@ -530,10 +532,7 @@ def login(nome, senha):
             while True:
                 limpar_tela()
                 cabecalho("NexBank - Seu banco digital")
-                print(
-                    f"Saldo: {login[5]:.2f}                   Conta N: {login[0]}\n"
-                    f"Credito: {login[6]:.2f}"
-                )
+                print(f"Conta N: {login[0]} | Saldo: {login[5]:.2f} | Credito: {login[6]:.2f}")
                 linha()
                 print(f"\nBem vindo {login[1]}")
 
@@ -543,8 +542,9 @@ def login(nome, senha):
                 if menu_principal == "1":
                     limpar_tela()
                     cabecalho("Transações - NexBank")
-                    print(f"Conta N: {login[0]}\n")
-                    print(f"Saldo: {login[5]:.2f} Credito: {login[6]:.2f}")
+                    print(
+                        f"Conta N: {login[0]} | Saldo: {login[5]:.2f} | Credito: {login[6]:.2f}"
+                    )
 
                     print(
                         "\n[1] Transferência\n[2] Ver histórico de transações\n[0] Voltar ao menu principal\n"
@@ -555,8 +555,8 @@ def login(nome, senha):
                         limpar_tela()
                         nome = "Transações"
                         cabecalho("Transações - NexBank")
-                        print(f"Conta N: {login[0]}\n")
-                        print(f"Saldo: {login[5]:.2f} Credito: {login[6]:.2f}\n")
+                        print(f"Conta N: {login[0]} | Saldo: {login[5]:.2f} | Credito: {login[6]:.2f}")
+                        print(linha)
 
                         conta_a_receber = int(input("Digite o numero da conta: "))
                         valor_a_transferir = float(input("digite o valor: "))
