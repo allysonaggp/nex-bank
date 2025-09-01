@@ -1,4 +1,5 @@
 import sqlite3
+import msvcrt
 from pathlib import Path
 from utils import hash_senha, limpar_tela
 
@@ -10,7 +11,7 @@ cursor = conexao.cursor()
 # Função que cria a tabela
 def criar_tabela_usuarios(conexao, cursor):
     cursor.execute(
-        "CREATE TABLE IF NOT EXISTS usuarios (id INTEGER PRIMARY KEY AUTOINCREMENT, nome VARCHAR(100),email VARCHAR(150),senha VARCHAR(150),privilegio iNTEGER,saldo REAL,credito REAL)"
+        "CREATE TABLE IF NOT EXISTS usuarios (id INTEGER PRIMARY KEY AUTOINCREMENT, nome VARCHAR(100),email VARCHAR(150),senha VARCHAR(150),privilegio iNTEGER,saldo FLOAT,credito FLOAT)"
     )
     print("Tabela criada com Sucesso!")
 
@@ -23,7 +24,7 @@ def criar_tabela_transacoes(conexao, cursor):
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             origem_id INTEGER,
             destino_id INTEGER,
-            valor REAL,
+            valor FLOAT,
             tipo TEXT,
             data TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (origem_id) REFERENCES usuarios(id),
@@ -56,19 +57,13 @@ def inserir_registro(nome, email, senha):
 
 # Função para cadastrar um administrador
 def inserir_registro_administrador(nome, email, senha):
-    data = (nome, email, senha, 1)
+    senha_hash = hash_senha(senha)
+    data = (nome, email, senha_hash, 1)
     cursor.execute(
         "INSERT INTO usuarios(nome,email,senha,privilegio) VALUES(?,?,?,?)", data
     )
     conexao.commit()
     print(f"\nAdministrador cadastrado com sucesso!")
-
-
-# iniciar
-def iniciar():
-    criar_tabela_usuarios(conexao, cursor)
-    criar_tabela_transacoes(conexao, cursor)
-    # inserir_registro_administrador("admin", "admin@gmail", "admin")
 
 
 # Função para inserir muitos registros de uma vez
@@ -78,13 +73,33 @@ def inserir_muitos(dados):
     print("\nRegistros inseridos com sucesso!\n\n")
 
 
+# iniciar
+def iniciar():
+    criar_tabela_usuarios(conexao, cursor)
+    criar_tabela_transacoes(conexao, cursor)
+    # inserir_registro_administrador("admin", "admin@gmail", "admin")
+
+
+# Função para atualizar dados
+def atualizar_registro(nome, email, senha, id):
+    data = (nome, email, senha, id)
+    cursor.execute(
+        "UPDATE usuarios SET nome=?, email=?,senha=? WHERE id=?",
+        data,
+    )
+    conexao.commit()
+    print(f"\nDados atualizados com sucesso!")
+
+
 # Função para consultar registros
 def consultar_registros(nome):
     data = nome
     cursor.execute("SELECT * FROM usuarios WHERE nome=?", (data,))
     result = cursor.fetchone()
     if result:
-        print(f"\nid: {result[0]:<4} nome: {result[1]:<20} email: {result[2]}")
+        print(
+            f"\nid: {result[0]} | nome: {result[1]} | email: {result[2]} | saldo: {result[5]:.2f} | credito: {result[6]:.2f}\n"
+        )
         return {
             "id": result[0],
             "nome": result[1],
@@ -135,11 +150,12 @@ def consultar_todos_registros():
 # Função para voltar ao menu de login
 def voltar_menu_login():
     while True:
-        resposta = input("[0] Voltar ao menu principal\n").strip().upper()
-        if resposta == "0":
+        print("[0] Voltar ao menu principal\n")
+        resposta = msvcrt.getch()
+        if resposta == b"0":
             print("Voltando ao menu anterior...")
             return
-        elif resposta == "N":
+        elif resposta == b"N":
             print("Ok, permanecendo no menu atual.")
         else:
             print("Opção inválida!")
@@ -162,9 +178,8 @@ def login(nome, senha):
                 print(f"{nome:^40}")
                 print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
                 print(f"\nBem vindo {login[1]}\n")
-                menu_principal_admin = input(
-                    "[1] Gerenciador de Usuários" "\n[2] Configuraçoes\n[0] Sair\n"
-                )
+                print("[1] Gerenciador de Usuários" "\n[2] Configuraçoes\n[0] Sair\n")
+                menu_principal_admin = msvcrt.getch().decode()
                 # Gerenciador de Usuários
                 if menu_principal_admin == "1":
                     limpar_tela()
@@ -173,10 +188,10 @@ def login(nome, senha):
                     print(f"{nome:^40}")
                     print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
                     print(f"\nBem vindo {login[1]}\n")
-                    menu_gerenciar_usuarios = input(
-                        "[1] Cadastrar Usuário"
-                        "\n[2] Consultar Usuário\n[3] Mostrar todos os Usuários Cadastrados\n[0] Sair\n"
+                    print(
+                        "[1] Cadastrar Usuário\n[2] Consultar Usuário\n[3] Mostrar todos os Usuários Cadastrados\n[0] Sair\n"
                     )
+                    menu_gerenciar_usuarios = msvcrt.getch().decode()
                     # Cadastrar Usuários
                     if menu_gerenciar_usuarios == "1":
                         limpar_tela()
@@ -184,9 +199,10 @@ def login(nome, senha):
                         print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
                         print(f"{nome:^40}")
                         print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-                        menu_registro = input(
+                        print(
                             "[1] Cadastrar Usuario\n[2] Cadastrar Administrador\n[0] Voltar ao menu principal\n"
                         )
+                        menu_registro = msvcrt.getch().decode()
                         if menu_registro == "1":
                             inserir_registro(
                                 input("\nDigite o seu nome: "),
@@ -212,24 +228,31 @@ def login(nome, senha):
                     elif menu_gerenciar_usuarios == "2":
                         limpar_tela()
                         nome = "Consultar registro de Usuarios"
-                        print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-                        print(f"{nome:^50}")
-                        print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+                        print(
+                            "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+                        )
+                        print(f"{nome:^73}")
+                        print(
+                            "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+                        )
                         usuario = consultar_registros(
                             input("Digite o nome do usuario que deseja consultar: ")
                         )
-                        print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n")
+                        print(
+                            "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n"
+                        )
 
-                        menu = input(
+                        print(
                             f"[1] Atribuir saldo ao Usuário {usuario['nome']}\n"
                             f"[2] Atribuir credito ao Usuário {usuario['nome']}\n"
                             f"[3] Atualizar dados de {usuario['nome']}\n"
                             f"[4] Deletar conta de {usuario['nome']}\n"
                             "[0] Voltar ao menu principal\n"
                         )
+                        menu = msvcrt.getch().decode()
                         # Atualizar dados do usuario
                         if menu == "1":
-
+                            # Atribuir saldo ao usuario
                             def adicionar_saldo(saldo, id):
                                 data = (saldo, id)
                                 cursor.execute(
@@ -242,14 +265,17 @@ def login(nome, senha):
                                 )
 
                             adicionar_saldo(
-                                input(
-                                    f"Digite o valor a ser depositado no Usuário: {usuario['nome']}\n"
+                                float(
+                                    input(
+                                        f"Digite o valor a ser depositado no Usuário: {usuario['nome']}\n"
+                                    )
                                 ),
                                 usuario["id"],
                             )
                             voltar_menu_login()
-                        if menu == "2":
 
+                        if menu == "2":
+                            # Atribuir credito ao usuario
                             def adicionar_credito(credito, id):
                                 data = (credito, id)
                                 cursor.execute(
@@ -262,15 +288,20 @@ def login(nome, senha):
                                 )
 
                             adicionar_credito(
-                                input(
-                                    f"Digite o valor do credito do Usuário: {usuario['nome']}\n"
+                                float(
+                                    input(
+                                        f"Digite o valor do credito do Usuário: {usuario['nome']}\n"
+                                    )
                                 ),
                                 usuario["id"],
                             )
                             voltar_menu_login()
+                        
                         if menu == "3":
-
-                            def atualizar_registro(nome, email, senha, privilegio, id):
+                            # Atualizar dados do usuario
+                            def atualizar_registro_admin(
+                                nome, email, senha, privilegio, id
+                            ):
                                 data = (
                                     nome,
                                     email,
@@ -285,7 +316,7 @@ def login(nome, senha):
                                 conexao.commit()
                                 print(f"\nDados atualizados com sucesso!")
 
-                            atualizar_registro(
+                            atualizar_registro_admin(
                                 input("Digite o novo Nome: "),
                                 input("Digite o novo Email: "),
                                 input("Digite a nova Senha: "),
@@ -299,7 +330,7 @@ def login(nome, senha):
                             voltar_menu_login()
 
                         if menu == "4":
-
+                            # Deletar conta do Usuário         
                             def deletar_registros(id):
                                 data = id
                                 cursor.execute(
@@ -313,9 +344,8 @@ def login(nome, senha):
                             )
                             print("ATENÇÃO! Essa ação é irreversivel!\n")
 
-                            confimacao = (
-                                input("Deseja continuar [S/N]? ").strip().upper()[0]
-                            )
+                            print("Deseja continuar [S/N]? ")
+                            confimacao = msvcrt.getch().decode().upper()
                             if confimacao == "N":
                                 voltar_menu_login()
                             elif confimacao == "S" and usuario["saldo"] == 0:
@@ -332,6 +362,7 @@ def login(nome, senha):
                             else:
                                 print("Opção invalida, tente de novo!")
 
+                            voltar_menu_login()
                         if menu == 0:
                             voltar_menu_login()
                         else:
@@ -361,9 +392,10 @@ def login(nome, senha):
                     print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
                     print(f"{nome:^42}")
                     print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-                    menu = input(
+                    print(
                         "[1] Modificar dados do cadastro \n[2] Deletar Conta \n[0] Sair\n"
                     )
+                    menu = msvcrt.getch().decode()
                     # Mudar dados do Cadastro
                     if menu == "1":
                         limpar_tela()
@@ -372,22 +404,74 @@ def login(nome, senha):
                         print(f"{nome:^42}")
                         print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
 
-                        def atualizar_registro(nome, email, senha, id):
-                            data = (nome, email, senha, id)
-                            cursor.execute(
-                                "UPDATE usuarios SET nome=?, email=?,senha=? WHERE id=?",
-                                data,
-                            )
-                            conexao.commit()
-                            print(f"\nDados atualizados com sucesso!")
-
-                        atualizar_registro(
-                            input("Digite o novo Nome: "),
-                            input("Digite o novo Email: "),
-                            input("Digite a nova Senha: "),
-                            login[0],
+                        print(
+                            "[1] Atualizar Nome\n[2] Atualizar Email\n[3] Atualizar Senha\n[0] Sair\n"
                         )
-                        voltar_menu_login()
+                        menu_atualizar_dados = msvcrt.getch().decode()
+
+                        # Padrão para atualizar nome
+                        if menu_atualizar_dados == "1":
+                            nome_valido = False
+                            while not nome_valido:
+                                nome = input("\nDigite seu nome: ").strip()
+                                if len(nome) < 3:
+                                    print("O nome deve ter pelo menos 3 caracteres.")
+                                else:
+                                    nome_valido = True
+
+                            atualizar_registro(
+                                nome,
+                                login[2],
+                                login[3],
+                                login[0],
+                            )
+                            voltar_menu_login()
+
+                        # Padrão para atualizar email
+                        if menu_atualizar_dados == "2":
+                            email_valido = False
+                            while not email_valido:
+                                email = input("Digite seu Email: ").strip()
+                                if (
+                                    email.count("@") != 1
+                                    or "." not in email.split("@")[-1]
+                                ):
+                                    print("Email inválido. Tente novamente.")
+
+                                else:
+                                    email_valido = True
+
+                            atualizar_registro(
+                                login[1],
+                                email,
+                                login[3],
+                                login[0],
+                            )
+                            voltar_menu_login()
+
+                        # Padrão para atualizar senha
+                        if menu_atualizar_dados == "3":
+                            senha_valida = False
+                            while not senha_valida:
+                                senha = input("Digite sua Senha: ").strip()
+                                senha2 = input("Confirme sua Senha: ").strip()
+                                if senha != senha2:
+                                    print("Senhas não conferem, tente novamente.")
+                                else:
+                                    senha_valida = True
+                            senha_hash = hash_senha(senha)
+                            atualizar_registro(
+                                login[1],
+                                login[2],
+                                senha_hash,
+                                login[0],
+                            )
+                            voltar_menu_login()
+
+                        # Sair
+                        if menu_atualizar_dados == "0":
+
+                            voltar_menu_login()
 
                     # Deletar conta do Usuário
                     elif menu == "2":
@@ -405,9 +489,8 @@ def login(nome, senha):
 
                         print("ATENÇÃO! Essa ação é irreversivel!\n")
 
-                        confimacao = (
-                            input("Deseja continuar [S/N]? ").strip().upper()[0]
-                        )
+                        print("Deseja continuar [S/N]? ")
+                        confimacao = msvcrt.getch().decode().upper()
                         if confimacao == "N":
                             login
                         elif confimacao == "S":
@@ -439,9 +522,8 @@ def login(nome, senha):
                 print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
                 print(f"\nBem vindo {login[1]}")
 
-                menu_principal = input(
-                    "\n[1] Transações\n[2] Configuraçoes\n[0] Sair\n"
-                )
+                print("\n[1] Transações\n[2] Configuraçoes\n[0] Sair\n")
+                menu_principal = msvcrt.getch().decode()
                 # Area de Credito Bancario
                 if menu_principal == "1":
                     limpar_tela()
@@ -452,9 +534,10 @@ def login(nome, senha):
                     print(f"Conta N: {login[0]}\n")
                     print(f"Saldo: {login[5]:.2f} Credito: {login[6]:.2f}")
 
-                    menu_transacoes = input(
+                    print(
                         "\n[1] Transferência\n[2] Ver histórico de transações\n[0] Voltar ao menu principal\n"
                     )
+                    menu_transacoes = msvcrt.getch().decode()
 
                     if menu_transacoes == "1":
                         limpar_tela()
@@ -506,45 +589,96 @@ def login(nome, senha):
                     else:
                         print("digite um numero válido!")
 
-                # configurações
-                if menu_principal == "2":
+                # Configurações
+                elif menu_principal == "2":
                     limpar_tela()
                     nome = "Configurações"
                     print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
                     print(f"{nome:^42}")
                     print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-                    menu_configuracoes = input(
+                    print(
                         "[1] Modificar dados do cadastro \n[2] Deletar Conta \n[0] Sair\n"
                     )
-
+                    menu = msvcrt.getch().decode()
                     # Mudar dados do Cadastro
-                    if menu_configuracoes == "1":
+                    if menu == "1":
                         limpar_tela()
                         nome = "Atualizar dados de Usuario"
                         print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
                         print(f"{nome:^42}")
                         print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-                        print(f"id: {login[0]} e nome: {login[1]}")
 
-                        def atualizar_registro(nome, email, senha, id):
-                            data = (nome, email, senha, id)
-                            cursor.execute(
-                                "UPDATE usuarios SET nome=?, email=?,senha=? WHERE id=?",
-                                data,
-                            )
-                            conexao.commit()
-                            print(f"\nDados atualizados com sucesso!")
-
-                        atualizar_registro(
-                            input("Digite o novo Nome: "),
-                            input("Digite o novo Email: "),
-                            input("Digite a nova Senha: "),
-                            login[0],
+                        print(
+                            "[1] Atualizar Nome\n[2] Atualizar Email\n[3] Atualizar Senha\n[0] Sair\n"
                         )
-                        voltar_menu_login()
+                        menu_atualizar_dados = msvcrt.getch().decode()
+
+                        # Padrão para atualizar nome
+                        if menu_atualizar_dados == "1":
+                            nome_valido = False
+                            while not nome_valido:
+                                nome = input("\nDigite seu nome: ").strip()
+                                if len(nome) < 3:
+                                    print("O nome deve ter pelo menos 3 caracteres.")
+                                else:
+                                    nome_valido = True
+
+                            atualizar_registro(
+                                nome,
+                                login[2],
+                                login[3],
+                                login[0],
+                            )
+                            voltar_menu_login()
+
+                        # Padrão para atualizar email
+                        if menu_atualizar_dados == "2":
+                            email_valido = False
+                            while not email_valido:
+                                email = input("Digite seu Email: ").strip()
+                                if (
+                                    email.count("@") != 1
+                                    or "." not in email.split("@")[-1]
+                                ):
+                                    print("Email inválido. Tente novamente.")
+
+                                else:
+                                    email_valido = True
+
+                            atualizar_registro(
+                                login[1],
+                                email,
+                                login[3],
+                                login[0],
+                            )
+                            voltar_menu_login()
+
+                        # Padrão para atualizar senha
+                        if menu_atualizar_dados == "3":
+                            senha_valida = False
+                            while not senha_valida:
+                                senha = input("Digite sua Senha: ").strip()
+                                senha2 = input("Confirme sua Senha: ").strip()
+                                if senha != senha2:
+                                    print("Senhas não conferem, tente novamente.")
+                                else:
+                                    senha_valida = True
+                            senha_hash = hash_senha(senha)
+                            atualizar_registro(
+                                login[1],
+                                login[2],
+                                senha_hash,
+                                login[0],
+                            )
+                            voltar_menu_login()
+
+                        # Sair
+                        if menu_atualizar_dados == "0":
+
+                            voltar_menu_login()
 
                     # Deletar conta do Usuário
-                    elif menu_configuracoes == "2":
+                    elif menu == "2":
                         limpar_tela()
                         nome = "Deletar conta de Usuario"
                         print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
@@ -559,9 +693,8 @@ def login(nome, senha):
 
                         print("ATENÇÃO! Essa ação é irreversivel!\n")
 
-                        confimacao = (
-                            input("Deseja continuar [S/N]? ").strip().upper()[0]
-                        )
+                        print("Deseja continuar [S/N]? ")
+                        confimacao = msvcrt.getch().decode().upper()
                         if confimacao == "N":
                             login
                         elif confimacao == "S" and login[5] == 0:
