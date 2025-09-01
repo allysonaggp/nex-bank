@@ -188,7 +188,6 @@ def consultar_transacoes(usuario_id):
         linha = "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
         print(linha)
         print(f"{nome:^{len(linha)}}")
-        print(linha)
         print("\nNenhuma transação encontrada.\n")
     else:
         limpar_tela()
