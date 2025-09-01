@@ -1,5 +1,6 @@
 import sqlite3
 import msvcrt
+import getpass
 from pathlib import Path
 from utils import hash_senha, limpar_tela
 
@@ -36,6 +37,32 @@ def criar_tabela_transacoes(conexao, cursor):
     print("Tabela de transações criada com sucesso!")
 
 
+# Função com verificação para cadastrar Usuário
+def cadastro():
+
+    nome_valido = False
+    while not nome_valido:
+        nome = input("\nDigite seu nome: ").strip()
+        if len(nome) < 3:
+            print("O nome deve ter pelo menos 3 caracteres.")
+
+        else:
+            nome_valido = True
+
+    email_valido = False
+    while not email_valido:
+        email = input("Digite seu Email: ").strip()
+        if email.count("@") != 1 or "." not in email.split("@")[-1]:
+            print("Email inválido. Tente novamente.")
+
+        else:
+            email_valido = True
+
+    senha = getpass.getpass("Digite sua Senha: ").strip()  # senha escondida
+    inserir_registro(nome, email, senha)
+    voltar_menu_login()
+
+
 # Função pra cadastrar Usuário
 def inserir_registro(nome, email, senha):
     senha_hash = hash_senha(senha)  # <-- aplica hash
@@ -65,7 +92,8 @@ def inserir_registro_administrador(nome, email, senha):
 
         data = (nome, email, senha_hash, 1, 0, 0)
         cursor.execute(
-            "INSERT INTO usuarios(nome,email,senha,privilegio,saldo,credito) VALUES(?,?,?,?,?,?)", data
+            "INSERT INTO usuarios(nome,email,senha,privilegio,saldo,credito) VALUES(?,?,?,?,?,?)",
+            data,
         )
         conexao.commit()
         print(f"\nAdministrador cadastrado com sucesso!")
@@ -80,7 +108,21 @@ def inserir_muitos(dados):
     print("\nRegistros inseridos com sucesso!\n\n")
 
 
-# iniciar
+# Função para imprimir uma linha
+def linha():
+    linha = "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+    print(linha)
+
+
+# Titulo padronizado
+def cabecalho(nome):
+    linha = "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+    print(linha)
+    print(f"{nome:^{len(linha)}}")
+    print(linha)
+
+
+# Iniciar
 def iniciar():
     criar_tabela_usuarios(conexao, cursor)
     criar_tabela_transacoes(conexao, cursor)
@@ -103,7 +145,9 @@ def consultar_registros(nome):
     data = nome
     cursor.execute("SELECT * FROM usuarios WHERE nome=?", (data,))
     result = cursor.fetchone()
-    if result:
+    if not result:
+        print("Usuario não encontrado")
+    else:
         print(
             f"\nid: {result[0]} | nome: {result[1]} | email: {result[2]} | saldo: {result[5]:.2f} | credito: {result[6]:.2f}\n"
         )
@@ -114,8 +158,16 @@ def consultar_registros(nome):
             "saldo": result[5],
             "credito": result[6],
         }
-    else:
-        print("Usuario não encontrado")
+
+
+# Função para consultar todos os registros
+def consultar_todos_registros():
+    cursor.execute("SELECT * FROM usuarios")
+    results = cursor.fetchall()
+    for result in results:
+        print(
+            f"\nid: {result[0]} | nome: {result[1]:<10} | email: {result[2]:^2} | saldo: {result[5]:<7.2f} | credito: {result[6]:.2f}"
+        )
 
 
 # Função consultar transaçoes
@@ -146,14 +198,6 @@ def consultar_transacoes(usuario_id):
             )
 
 
-# Função para consultar todos os registros
-def consultar_todos_registros():
-    cursor.execute("SELECT * FROM usuarios")
-    results = cursor.fetchall()
-    for result in results:
-        print(f"id: {result[0]:<4} nome: {result[1]:<20} email: {result[2]}")
-
-
 # Função para voltar ao menu de login
 def voltar_menu_login():
     while True:
@@ -180,20 +224,14 @@ def login(nome, senha):
         if login[4] == 1:
             while True:
                 limpar_tela()
-                nome = "Sistema do administrador"
-                print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-                print(f"{nome:^40}")
-                print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+                cabecalho("Sistema Administrativo - NexBank")
                 print(f"\nBem vindo {login[1]}\n")
                 print("[1] Gerenciador de Usuários" "\n[2] Configuraçoes\n[0] Sair\n")
                 menu_principal_admin = msvcrt.getch().decode()
                 # Gerenciador de Usuários
                 if menu_principal_admin == "1":
                     limpar_tela()
-                    nome = "Gerenciador de Usuários"
-                    print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-                    print(f"{nome:^40}")
-                    print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+                    cabecalho("Gerenciador de Usuários - NexBank")
                     print(f"\nBem vindo {login[1]}\n")
                     print(
                         "[1] Cadastrar Usuário\n[2] Consultar Usuário\n[3] Mostrar todos os Usuários Cadastrados\n[0] Sair\n"
@@ -202,20 +240,13 @@ def login(nome, senha):
                     # Cadastrar Usuários
                     if menu_gerenciar_usuarios == "1":
                         limpar_tela()
-                        nome = "Cadastrar Usuários"
-                        print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-                        print(f"{nome:^40}")
-                        print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+                        cabecalho("Cadastro de Usuário - NexBank")
                         print(
                             "[1] Cadastrar Usuario\n[2] Cadastrar Administrador\n[0] Voltar ao menu principal\n"
                         )
                         menu_registro = msvcrt.getch().decode()
                         if menu_registro == "1":
-                            inserir_registro(
-                                input("\nDigite o seu nome: "),
-                                input("Digite o seu Email: "),
-                                input("Digite uma Senha: "),
-                            )
+                            cadastro()
                             voltar_menu_login()
 
                         elif menu_registro == "2":
@@ -234,28 +265,22 @@ def login(nome, senha):
                     # Consultar registro de Usuarios
                     elif menu_gerenciar_usuarios == "2":
                         limpar_tela()
-                        nome = "Consultar registro de Usuarios"
-                        print(
-                            "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
-                        )
-                        print(f"{nome:^73}")
-                        print(
-                            "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
-                        )
+                        cabecalho("Consulta de Usuário - NexBank")
                         usuario = consultar_registros(
                             input("Digite o nome do usuario que deseja consultar: ")
                         )
-                        print(
-                            "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n"
-                        )
-
-                        print(
-                            f"[1] Atribuir saldo ao Usuário {usuario['nome']}\n"
-                            f"[2] Atribuir credito ao Usuário {usuario['nome']}\n"
-                            f"[3] Atualizar dados de {usuario['nome']}\n"
-                            f"[4] Deletar conta de {usuario['nome']}\n"
-                            "[0] Voltar ao menu principal\n"
-                        )
+                        if not usuario:
+                            linha()
+                            voltar_menu_login()
+                        else:
+                            linha()
+                            print(
+                                f"[1] Atribuir saldo ao Usuário {usuario['nome']}\n"
+                                f"[2] Atribuir credito ao Usuário {usuario['nome']}\n"
+                                f"[3] Atualizar dados de {usuario['nome']}\n"
+                                f"[4] Deletar conta de {usuario['nome']}\n"
+                                "[0] Voltar ao menu principal\n"
+                            )
                         menu = msvcrt.getch().decode()
                         # Atualizar dados do usuario
                         if menu == "1":
@@ -274,7 +299,7 @@ def login(nome, senha):
                             adicionar_saldo(
                                 float(
                                     input(
-                                        f"Digite o valor a ser depositado no Usuário: {usuario['nome']}\n"
+                                        f"Digite o valor a ser depositado a {usuario['nome']}: \n"
                                     )
                                 ),
                                 usuario["id"],
@@ -298,7 +323,7 @@ def login(nome, senha):
                             adicionar_credito(
                                 float(
                                     input(
-                                        f"Digite o valor do credito do Usuário: {usuario['nome']}\n"
+                                        f"Digite o valor a ser creditado a {usuario['nome']}: \n"
                                     )
                                 ),
                                 usuario["id"],
@@ -382,27 +407,15 @@ def login(nome, senha):
                     # Todos os Usuários cadastrados
                     elif menu_gerenciar_usuarios == "3":
                         limpar_tela()
-                        nome = "Todos Usuarios cadastrados"
-                        print(
-                            "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-"
-                        )
-                        print(f"{nome:^60}")
-                        print(
-                            "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-"
-                        )
+                        cabecalho("Todos os Usuários Cadastrados - NexBank")
                         consultar_todos_registros()
-                        print(
-                            "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-"
-                        )
+                        linha()
                         voltar_menu_login()
 
                 # Configurações
                 elif menu_principal_admin == "2":
                     limpar_tela()
-                    nome = "Configurações"
-                    print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-                    print(f"{nome:^42}")
-                    print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+                    cabecalho("Configurações de conta - NexBank")
                     print(
                         "[1] Modificar dados do cadastro \n[2] Deletar Conta \n[0] Sair\n"
                     )
@@ -410,10 +423,7 @@ def login(nome, senha):
                     # Mudar dados do Cadastro
                     if menu == "1":
                         limpar_tela()
-                        nome = "Atualizar dados de Usuario"
-                        print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-                        print(f"{nome:^42}")
-                        print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+                        cabecalho("Atualizar dados de Usuario - NexBank")
 
                         print(
                             "[1] Atualizar Nome\n[2] Atualizar Email\n[3] Atualizar Senha\n[0] Sair\n"
@@ -487,10 +497,7 @@ def login(nome, senha):
                     # Deletar conta do Usuário
                     elif menu == "2":
                         limpar_tela()
-                        nome = "Deletar conta de Usuario"
-                        print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-                        print(f"{nome:^42}")
-                        print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+                        cabecalho("Deletar conta de Usuario - NexBank")
 
                         def deletar_registros(id):
                             data = (id,)
@@ -522,15 +529,12 @@ def login(nome, senha):
 
             while True:
                 limpar_tela()
-                nome = "NexBank"
-                print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-                print(f"{nome:^43}")
-                print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+                cabecalho("NexBank - Seu banco digital")
                 print(
                     f"Saldo: {login[5]:.2f}                   Conta N: {login[0]}\n"
                     f"Credito: {login[6]:.2f}"
                 )
-                print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+                linha()
                 print(f"\nBem vindo {login[1]}")
 
                 print("\n[1] Transações\n[2] Configuraçoes\n[0] Sair\n")
@@ -538,10 +542,7 @@ def login(nome, senha):
                 # Area de Credito Bancario
                 if menu_principal == "1":
                     limpar_tela()
-                    nome = "Transações"
-                    print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-                    print(f"{nome:^40}")
-                    print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+                    cabecalho("Transações - NexBank")
                     print(f"Conta N: {login[0]}\n")
                     print(f"Saldo: {login[5]:.2f} Credito: {login[6]:.2f}")
 
@@ -553,9 +554,7 @@ def login(nome, senha):
                     if menu_transacoes == "1":
                         limpar_tela()
                         nome = "Transações"
-                        print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-                        print(f"{nome:^40}")
-                        print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+                        cabecalho("Transações - NexBank")
                         print(f"Conta N: {login[0]}\n")
                         print(f"Saldo: {login[5]:.2f} Credito: {login[6]:.2f}\n")
 
@@ -603,10 +602,7 @@ def login(nome, senha):
                 # Configurações
                 elif menu_principal == "2":
                     limpar_tela()
-                    nome = "Configurações"
-                    print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-                    print(f"{nome:^42}")
-                    print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+                    cabecalho("Configurações de conta - NexBank")
                     print(
                         "[1] Modificar dados do cadastro \n[2] Deletar Conta \n[0] Sair\n"
                     )
@@ -614,10 +610,7 @@ def login(nome, senha):
                     # Mudar dados do Cadastro
                     if menu == "1":
                         limpar_tela()
-                        nome = "Atualizar dados de Usuario"
-                        print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-                        print(f"{nome:^42}")
-                        print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+                        cabecalho("Atualizar dados de Usuario - NexBank")
 
                         print(
                             "[1] Atualizar Nome\n[2] Atualizar Email\n[3] Atualizar Senha\n[0] Sair\n"
@@ -691,10 +684,7 @@ def login(nome, senha):
                     # Deletar conta do Usuário
                     elif menu == "2":
                         limpar_tela()
-                        nome = "Deletar conta de Usuario"
-                        print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-                        print(f"{nome:^42}")
-                        print("=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+                        cabecalho("Deletar conta de Usuario - NexBank")
 
                         def deletar_registros(id):
                             data = (id,)
