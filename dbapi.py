@@ -3,10 +3,20 @@ import msvcrt
 import getpass
 from pathlib import Path
 from utils import hash_senha, limpar_tela
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 ROOT_PATH = Path(__file__).parent
 conexao = sqlite3.connect(ROOT_PATH / "banco_de_dados.db")
 cursor = conexao.cursor()
+
+
+# funcao converter data UTC para local
+def converter_utc_para_local(utc_str, fuso_local="America/Recife"):
+    utc_dt = datetime.strptime(utc_str, "%Y-%m-%d %H:%M:%S")
+    utc_dt = utc_dt.replace(tzinfo=ZoneInfo("UTC"))
+    local_dt = utc_dt.astimezone(ZoneInfo(fuso_local))
+    return local_dt.strftime("%d-%m-%Y %H:%M:%S")
 
 
 # Função que cria a tabela
@@ -110,13 +120,13 @@ def inserir_muitos(dados):
 
 # Função para imprimir uma linha
 def linha():
-    linha = "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+    linha = "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
     print(linha)
 
 
 # Titulo padronizado
 def cabecalho(nome):
-    linha = "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+    linha = "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
     print(linha)
     print(f"{nome:^{len(linha)}}")
     print(linha)
@@ -138,6 +148,14 @@ def atualizar_registro(nome, email, senha, id):
     )
     conexao.commit()
     print(f"\nDados atualizados com sucesso!")
+
+
+# Funçào consultar conta
+def consultar_conta(conta):
+    data = conta
+    cursor.execute("SELECT * FROM usuarios Where id=?", (data,))
+    conta = cursor.fetchone()
+    return conta[0]
 
 
 # Função para consultar registros
@@ -185,21 +203,20 @@ def consultar_transacoes(usuario_id):
 
     if not transacoes:
         nome = "Histórico de Transações:"
-        linha = "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+        linha = "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
         print(linha)
         print(f"{nome:^{len(linha)}}")
         print("\nNenhuma transação encontrada.\n")
     else:
         limpar_tela()
         nome = "Histórico de Transações:"
-        linha = "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+        linha = "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
         print(linha)
         print(f"{nome:^{len(linha)}}")
         print(linha)
         for t in transacoes:
             print(
-                f"ID: {t[0]} | Origem: {t[1]} | Destino: {t[2]} | Valor: {t[3]:.2f}\nTipo: {t[4]} | Data: {t[5]}\n"
-                
+                f"Data: {converter_utc_para_local(t[5])} | Transaçao N: {t[0]} | Origem: {t[1]} | Destino: {t[2]} | Valor: {t[3]:.2f} | Tipo: {t[4]}"
             )
 
 
@@ -230,7 +247,9 @@ def login(nome, senha):
             while True:
                 limpar_tela()
                 cabecalho("Sistema Administrativo - NexBank")
-                print(f"Conta N: {login[0]} | Saldo: {login[5]:.2f} | Credito: {login[6]:.2f}")
+                print(
+                    f"Conta N: {login[0]} | Saldo: {login[5]:.2f} | Credito: {login[6]:.2f}"
+                )
                 linha()
                 print(f"\nBem vindo {login[1]}\n")
                 print("[1] Gerenciador de Usuários" "\n[2] Configuraçoes\n[0] Sair\n")
@@ -537,7 +556,9 @@ def login(nome, senha):
             while True:
                 limpar_tela()
                 cabecalho("NexBank - Seu banco digital")
-                print(f"Conta N: {login[0]} | Saldo: {login[5]:.2f} | Credito: {login[6]:.2f}")
+                print(
+                    f"Conta N: {login[0]} | Saldo: {login[5]:.2f} | Credito: {login[6]:.2f}"
+                )
                 linha()
                 print(f"\nBem vindo {login[1]}")
 
@@ -560,43 +581,55 @@ def login(nome, senha):
                         limpar_tela()
                         nome = "Transações"
                         cabecalho("Transações - NexBank")
-                        print(f"Conta N: {login[0]} | Saldo: {login[5]:.2f} | Credito: {login[6]:.2f}")
-                        print(linha)
+                        print(
+                            f"Conta N: {login[0]} | Saldo: {login[5]:.2f} | Credito: {login[6]:.2f}"
+                        )
+                        linha()
+                        verificador_conta = False
+                        while verificador_conta is False:
+                            conta_a_receber = consultar_conta(
+                                input("Digite o número da conta que irá receber: ")
+                            )
+                            if not conta_a_receber:
+                                print("Conta nao encontrada\n")
+                            elif conta_a_receber == login[0]:
+                                print("Por favor digite outra conta você nao pode transferir para você mesmo\n")    
+                            else:
+                                verificador_conta = True
+                                valor_a_transferir = float(input("digite o valor: "))
 
-                        conta_a_receber = int(input("Digite o numero da conta: "))
-                        valor_a_transferir = float(input("digite o valor: "))
-
-                        if login[5] >= valor_a_transferir:
-                            # debita
-                            cursor.execute(
-                                "UPDATE usuarios SET saldo = saldo - ? WHERE id=?",
-                                (valor_a_transferir, login[0]),
-                            )
-                            # credita
-                            cursor.execute(
-                                "UPDATE usuarios SET saldo = saldo + ? WHERE id=?",
-                                (valor_a_transferir, conta_a_receber),
-                            )
-                            # registra transação
-                            cursor.execute(
-                                "INSERT INTO transacoes (origem_id, destino_id, valor, tipo) VALUES (?, ?, ?, ?)",
-                                (
-                                    login[0],
-                                    conta_a_receber,
-                                    valor_a_transferir,
-                                    "transferencia",
-                                ),
-                            )
-                            conexao.commit()
-                            print("Transferência realizada com sucesso!")
-                        else:
-                            print("Saldo insuficiente!")
+                                if login[5] >= valor_a_transferir:
+                                    # debita
+                                    cursor.execute(
+                                        "UPDATE usuarios SET saldo = saldo - ? WHERE id=?",
+                                        (valor_a_transferir, login[0]),
+                                    )
+                                    # credita
+                                    cursor.execute(
+                                        "UPDATE usuarios SET saldo = saldo + ? WHERE id=?",
+                                        (valor_a_transferir, conta_a_receber),
+                                    )
+                                    # registra transação
+                                    cursor.execute(
+                                        "INSERT INTO transacoes (origem_id, destino_id, valor, tipo) VALUES (?, ?, ?, ?)",
+                                        (
+                                            login[0],
+                                            conta_a_receber,
+                                            valor_a_transferir,
+                                            "transferencia",
+                                        ),
+                                    )
+                                    conexao.commit()
+                                    print("Transferência realizada com sucesso!")
+                                else:
+                                    print("Saldo insuficiente!")
 
                         voltar_menu_login()
                     # Histórico de transações
                     if menu_transacoes == "2":
                         limpar_tela()
                         consultar_transacoes(login[0])
+                        linha()
                         voltar_menu_login()
                     # Sair
                     elif menu_transacoes == "0":
