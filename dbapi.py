@@ -22,7 +22,7 @@ def converter_utc_para_local(utc_str, fuso_local="America/Recife"):
 # Função que cria a tabela
 def criar_tabela_usuarios(conexao, cursor):
     cursor.execute(
-        "CREATE TABLE IF NOT EXISTS usuarios (id INTEGER PRIMARY KEY AUTOINCREMENT, nome VARCHAR(100),email VARCHAR(150),senha VARCHAR(150),privilegio iNTEGER,saldo FLOAT,credito FLOAT)"
+        "CREATE TABLE IF NOT EXISTS usuarios (id INTEGER PRIMARY KEY AUTOINCREMENT, nome VARCHAR(100),email VARCHAR(150),senha VARCHAR(150),privilegio INTEGER,saldo FLOAT,credito FLOAT,cpf INTEGER)"
     )
     print("Tabela criada com Sucesso!")
 
@@ -74,22 +74,62 @@ def cadastro():
 
 
 # Função pra cadastrar Usuário
-def inserir_registro(nome, email, senha):
+def inserir_registro(nome, email, cpf, senha):
     senha_hash = hash_senha(senha)  # <-- aplica hash
-    cursor.execute("SELECT COUNT(id) FROM usuarios;")
-    total_cadastrados = cursor.fetchone()[0]
-
-    if total_cadastrados > 1 and total_cadastrados <= 5:
-        data = (nome, email, senha_hash, 100, 0, 0)
+    conn = sqlite3.connect("banco_de_dados.db", check_same_thread=False)
+    cursor = conn.cursor()
+    if consultar_email(email):
+        print("Email já cadastrado, tente outro!")
+        return
     else:
-        data = (nome, email, senha_hash, 0, 0, 0)
+        cursor.execute("SELECT COUNT(id) FROM usuarios;")
+        total_cadastrados = cursor.fetchone()[0]
+
+        if total_cadastrados > 1 and total_cadastrados <= 5:
+            data = (nome, email, cpf, senha_hash, 100, 0, 0)
+        else:
+            data = (nome, email, cpf, senha_hash, 0, 0, 0)
+
+        cursor.execute(
+            "INSERT INTO usuarios(nome,email,cpf,senha,saldo,credito,privilegio) VALUES(?,?,?,?,?,?,?)",
+            data,
+        )
+        conn.commit()
+        print(f"\nusuario {nome} cadastrado com sucesso!")
+        conn.close()
+
+
+# Funçào consultar conta site
+def consultar_email(email):
+    data=(email,)
+    # Cria conexão dentro da função
+    conn = sqlite3.connect("banco_de_dados.db", check_same_thread=False)
+    cursor = conn.cursor()
 
     cursor.execute(
-        "INSERT INTO usuarios(nome,email,senha,saldo,credito,privilegio) VALUES(?,?,?,?,?,?)",
-        data,
+        "SELECT * FROM usuarios WHERE email=?", (data)
     )
-    conexao.commit()
-    print(f"\nusuario {nome} cadastrado com sucesso!")
+    resultado = cursor.fetchone()
+
+    conn.close()
+    return resultado
+
+
+# Funçào consultar conta site
+def consultar_conta_site(usuario, senha):
+    senha_hash = hash_senha(senha)
+
+    # Cria conexão dentro da função
+    conn = sqlite3.connect("banco_de_dados.db", check_same_thread=False)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT * FROM usuarios WHERE nome=? AND senha=?", (usuario, senha_hash)
+    )
+    resultado = cursor.fetchone()
+
+    conn.close()
+    return resultado is not None
 
 
 # Função para cadastrar um administrador
@@ -593,7 +633,9 @@ def login(nome, senha):
                             if not conta_a_receber:
                                 print("Conta nao encontrada\n")
                             elif conta_a_receber == login[0]:
-                                print("Por favor digite outra conta você nao pode transferir para você mesmo\n")    
+                                print(
+                                    "Por favor digite outra conta você nao pode transferir para você mesmo\n"
+                                )
                             else:
                                 verificador_conta = True
                                 valor_a_transferir = float(input("digite o valor: "))
