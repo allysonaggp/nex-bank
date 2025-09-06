@@ -23,4 +23,3 @@ O sistema utiliza **SQLite** para persistência de dados e implementa **hash de 
 --- Em Desenvolvimento ---
 
 
-

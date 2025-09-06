@@ -1,0 +1,420 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #0a0a0a;
+    color: #f5f5f5;
+    margin: 0;
+    min-height: 100vh;
+}
+
+/* General */
+#vanta-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color .3s;
+}
+
+a:hover {
+    text-shadow: 0 0 5px #ffffff, 0 0 10px #3dc8c8;
+}
+
+/* Header */
+.header {
+    border-bottom: 1px solid #1a1a1a;
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+}
+
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.logo-text {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 5px #ffffff, 0 0 10px #3dc8c8;
+    margin-bottom: 0.5rem;
+    margin-top: .2rem;
+    margin-left: 4rem;
+    
+}
+
+
+
+
+
+.nav {
+    display: none;
+}
+
+@media(min-width:768px) {
+    .nav {
+        display: flex;
+        gap: 1.5rem;
+    }
+}
+
+.header-actions{
+    margin-right: 4.5rem;
+}
+
+
+.header-actions button {
+    background: none;
+    border: none;
+    padding: .5rem;
+    border-radius: 50%;
+    transition: background .3s;
+    color: inherit;
+
+}
+
+.header-actions button:hover {
+    background: #1a1a1a;
+    
+}
+
+/* Main Layout */
+.main {
+    max-width: 1200px;
+    margin: auto;
+    padding: 2rem 1rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 0 4rem;
+}
+
+@media(min-width:1024px) {
+    .grid {
+        grid-template-columns: 2fr 1fr;
+    }
+}
+
+/* Cards */
+.card {
+    background: rgba(18, 18, 18, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+    padding: 1.5rem;
+}
+
+.card-header,
+.card-footer {
+    height: 4.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    align-items: center;
+    margin-bottom: -1rem;
+}
+
+.balance-info {
+    display: flex;
+    flex-direction: column;
+    margin-top: -1rem;
+
+}
+
+.card-footer {
+    border-top: 1px solid #222;
+    padding-top: .5rem;
+    margin-top: 2rem;
+}
+
+/* Buttons */
+.btn-gold {
+    background: linear-gradient(135deg, #d4af37, #f9e076);
+    color: #121212;
+    font-weight: 600;
+    padding: .5rem 1rem;
+    border: none;
+    border-radius: .5rem;
+    cursor: pointer;
+}
+
+.btn-gold:hover {
+    background: linear-gradient(135deg, #c9a42d, #f5d86e);
+}
+
+.btn-outline {
+    border: 1px solid #d4af37;
+    color: #d4af37;
+    background: none;
+    padding: .5rem 1rem;
+    border-radius: .5rem;
+    cursor: pointer;
+}
+
+.btn-outline.small {
+    padding: .25rem .75rem;
+    font-size: .75rem;
+}
+
+/* Quick Actions */
+.title-text-card {
+    margin-top: -1rem;
+    margin-bottom: .5rem;
+}
+
+.actions {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    height: 4.8rem;
+    margin-bottom: 1rem;
+}
+
+.actions button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+    padding: .75rem;
+    border-radius: .5rem;
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    transition: background .3s;
+}
+
+.actions button:hover {
+    background: #1a1a1a;
+}
+
+.actions .icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #d4af37;
+}
+
+/* Transactions */
+.transactions .transaction {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* padding: .75rem; */
+    border-radius: .5rem;
+    transition: background .3s;
+
+}
+
+.link {
+    color: #d4af37;
+    text-decoration: none;
+    font-size: small;
+}
+
+.transactions .transaction:hover {
+    background: #1a1a1a;
+}
+
+.tx-info {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+
+.transaction-details {}
+
+.transaction-details-text {
+    margin-top: 1rem;
+    margin-bottom: -.5rem;
+
+}
+
+.tx-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #d4af37;
+}
+
+/* Credit Card */
+.credit-card {
+    background: linear-gradient(135deg, #121212, #1a1a1a);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    height: 8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.cc-header{
+    display: flex;
+    justify-content: space-between;
+}
+
+.cc-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top:1rem;
+}
+.card-text-foot-position{
+    margin-top: 1.5rem;
+    margin-bottom: -.5rem;
+}
+.card-valid-date{
+    margin-left: 0.7rem;
+}
+
+
+.div-card-number {
+    display: flex;
+    flex-direction: column;
+    margin-top: -1rem;
+    gap: .5rem;
+}
+
+.card-number {
+    margin-top: -1rem;
+   
+}
+
+.cc-logo {
+    height: 30%;
+    background: #d4af37;
+    color: #121212;
+    font-size: .75rem;
+    font-weight: bold;
+    padding: .35rem .5rem;
+    border-radius: .25rem;
+}
+
+.cc-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.cc-actions button {
+    background: none;
+    border: none;
+    color: #d4af37;
+    display: flex;
+    align-items: center;
+    gap: .25rem;
+    font-size: .875rem;
+    cursor: pointer;
+}
+
+/* Investments */
+.investment {
+    display: flex;
+    justify-content: space-between;
+    margin: -.5rem 0;
+}
+
+/* Offers */
+.offer {
+    background: linear-gradient(90deg, #1a1a1a, #222);
+    border-radius: .5rem;
+    padding: 1rem;
+}
+
+/* Mobile Nav */
+.mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #0a0a0a;
+    border-top: 1px solid #1a1a1a;
+    display: flex;
+    justify-content: space-around;
+    padding: .75rem 0;
+}
+
+.mobile-nav button {
+    background: none;
+    border: none;
+    color: #c0c0c0;
+    font-size: .75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .25rem;
+}
+
+.mobile-nav button.active {
+    color: #d4af37;
+}
+
+/* Helpers */
+.text-silver {
+    color: #c0c0c0;
+}
+
+.text-gold {
+    color: #d4af37;
+}
+
+.small {
+    font-size: .75rem;
+}
+
+.positive {
+    color: #4ade80;
+}
+
+.negative {
+    color: #f87171;
+}
+
+.full {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.balance {
+    font-size: 1.875rem;
+    font-weight: bold;
+    margin-top: -.5rem;
+}
+
+/* coluna esquerda */
+.left-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* coluna direita */
+.right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
