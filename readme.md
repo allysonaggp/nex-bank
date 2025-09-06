@@ -10,15 +10,15 @@ O sistema utiliza **SQLite** para persistência de dados e implementa **hash de 
 
 ✅ Tela de login
 
-![alt text](image.png)
+![alt text](/fotos/login.png)
 
 ✅ Tela de cadastro
 
-![alt text](image-1.png)
+![alt text](/fotos/cadastro.png)
 
 ✅ Tela de interface
 
-![alt text](image-2.png)
+![alt text](/fotos/home.png)
 
 --- Em Desenvolvimento ---
 
