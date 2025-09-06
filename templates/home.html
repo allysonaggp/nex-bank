@@ -1,1 +1,209 @@
-<h1>Bem vindo</h1>
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Bank | Banco Digital</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles_home.css">
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container flex-between">
+      <div class="logo">
+        <!-- icone do aldo esquerdo do nome da logo -->
+        <i data-feather="" class="icon-lg indigo"></i>
+        <span class="logo-text">Nexus Bank</span>
+      </div>
+      <!-- Botoes de navegação -->
+      <div class="nav-links">
+        <a href="#" class="active">Dashboard</a>
+        <a href="#">Transferências</a>
+        <a href="#">Investimentos</a>
+        <a href="#">Cartões</a>
+      </div>
+      <div class="actions">
+        <a href="{{url_for('logout')}}" class="btn btn-sair">Sair da conta</a>
+        <div class="avatar">
+          <!-- icone usuario arra de navegação -->
+          <i data-feather="user" class="icon-sm indigo"></i>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Conteúdo principal -->
+  <main class="container">
+    <!-- Banner nome de usuario e conta-->
+    <section class="banner gradient-bg">
+      <div class="banner-content">
+        <div>
+          <!-- adicionar link com nome do usuario -->
+          <h2>Olá, {{session.usuario}}</h2>
+          <p class="text-gray">Bem-vindo de volta ao seu Nexus Bank</p>
+        </div>
+        <!-- numero daconta bancaria -->
+        <span class="account gray-text">Agência: 0001 | Conta: {{session.conta}}</span>
+      </div>
+    </section>
+
+    <!-- Saldo / Cartão / Investimentos -->
+    <section class="cards-grid">
+      <!-- Saldo -->
+      <div class="card1">
+        <div class="flex-between">
+          <h3 class="text-card">Saldo disponível</h3>
+          <i data-feather="eye" class="ico text-card"></i>
+        </div>
+        <p class="big-value">{{session.saldo}}</p>
+        <div class="btn-saldo">
+          <button class="btn btn-depositar">Depositar</button>
+          <button class="btn btn-transferir">Transferir</button>
+        </div>
+      </div>
+
+      <!-- Cartão -->
+      <div class="card1 gradient-card">
+        <div class="flex-between">
+          <h3>Cartão de Crédito</h3>
+          <i data-feather="credit-card" class="icon"></i>
+        </div>
+        <p class="label">Fatura atual</p>
+        <p class="big-value">{{session.credito}}</p>
+        <p class="vencimento-credito">Vencimento: 10/12/2023</p>
+        <button class="btn btn-light full">Pagar fatura</button>
+      </div>
+
+      <!-- Investimentos -->
+      <div class="card1">
+        <div class="flex-between">
+          <h3 class="text-card">Investimentos</h3>
+          <i data-feather="trending-up" class="icon text-card"></i>
+        </div>
+        <p class="big-value">R$ 8.342,10</p>
+        <p class="small text-card">+2,34% este mês</p>
+        <button class="btn btn-investimento full">Ver investimentos</button>
+      </div>
+
+    </section>
+
+    <!-- Transações -->
+    <section class="card transactions">
+      <h3>Últimas transações</h3>
+      <div class="transaction">
+        <div class="icon-circle indigo"><i data-feather="shopping-bag"></i></div>
+        <div class="info">
+          <p class="title">Amazon.com</p>
+          <p class="subtitle small">Compra online</p>
+        </div>
+        <div class="amount red">
+          - R$ 89,90 <br><span>Hoje, 14:32</span>
+        </div>
+      </div>
+      <div class="transaction">
+        <div class="icon-circle green"><i data-feather="dollar-sign"></i></div>
+        <div class="info">
+          <p class="title">Depósito</p>
+          <p class="subtitle small">Salário</p>
+        </div>
+        <div class="amount credito">
+          + R$ 5.200,00 <br><span>Ontem, 08:15</span>
+        </div>
+      </div>
+      <div class="transaction">
+        <div class="icon-circle blue"><i data-feather="smartphone"></i></div>
+        <div class="info">
+          <p class="title">Spotify</p>
+          <p class="subtitle small">Assinatura mensal</p>
+        </div>
+        <div class="amount red">
+          - R$ 19,90 <br><span>25/11/2023</span>
+        </div>
+      </div>
+      <div class="transaction">
+        <div class="icon-circle purple"><i data-feather="users"></i></div>
+        <div class="info">
+          <p class="title">Maria Souza</p>
+          <p class="subtitle small">Transferência recebida</p>
+        </div>
+        <div class="amount credito">
+          + R$ 150,00 <br><span>24/11/2023</span>
+        </div>
+      </div>
+      <div class="transactions-footer">
+        <button class="link">Ver todas as transações</button>
+      </div>
+    </section>
+
+    <!-- Acesso rápido -->
+    <section class="quick-access">
+      <h3>Acesso rápido</h3>
+      <div class="quick-grid">
+        <button class="quick-btn">
+          <div class="icon-circle indigo"><i data-feather="send"></i></div>
+          Transferir
+        </button>
+        <button class="quick-btn">
+          <div class="icon-circle green"><i data-feather="dollar-sign"></i></div>
+          Depositar
+        </button>
+        <button class="quick-btn">
+          <div class="icon-circle blue"><i data-feather="smartphone"></i></div>
+          Recarga
+        </button>
+        <button class="quick-btn">
+          <div class="icon-circle purple"><i data-feather="credit-card"></i></div>
+          Cartões
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div>
+        <h3>Nexus Bank</h3>
+        <p>O banco da nova geração.</p>
+      </div>
+      <div>
+        <h3>Conta</h3>
+        <ul>
+          <li><a href="#">Minha conta</a></li>
+          <li><a href="#">Transferências</a></li>
+          <li><a href="#">Pagamentos</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Cartões</h3>
+        <ul>
+          <li><a href="#">Meus cartões</a></li>
+          <li><a href="#">Solicitar cartão</a></li>
+          <li><a href="#">Cartão virtual</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Ajuda</h3>
+        <ul>
+          <li><a href="#">Central de ajuda</a></li>
+          <li><a href="#">Fale conosco</a></li>
+          <li><a href="#">Termos de uso</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2023 Nexus Bank. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script>
+    feather.replace();
+  </script>
+</body>
+
+</html>

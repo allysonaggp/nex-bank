@@ -101,14 +101,12 @@ def inserir_registro(nome, email, cpf, senha):
 
 # Funçào consultar conta site
 def consultar_email(email):
-    data=(email,)
+    data = (email,)
     # Cria conexão dentro da função
     conn = sqlite3.connect("banco_de_dados.db", check_same_thread=False)
     cursor = conn.cursor()
 
-    cursor.execute(
-        "SELECT * FROM usuarios WHERE email=?", (data)
-    )
+    cursor.execute("SELECT * FROM usuarios WHERE email=?", (data))
     resultado = cursor.fetchone()
 
     conn.close()
@@ -126,11 +124,21 @@ def consultar_conta_site(usuario, senha):
     cursor.execute(
         "SELECT * FROM usuarios WHERE nome=? AND senha=?", (usuario, senha_hash)
     )
-    resultado = cursor.fetchone()
-
+    result = cursor.fetchone()
     conn.close()
-    return resultado is not None
 
+    if result:
+        dados ={
+            "id": result[0],
+            "nome": result[1],
+            "email": result[2],
+            "saldo": result[5],
+            "credito": result[6],
+            "cpf": result[7],
+        }
+        return dados
+    else:
+        return None
 
 # Função para cadastrar um administrador
 def inserir_registro_administrador(nome, email, senha):
