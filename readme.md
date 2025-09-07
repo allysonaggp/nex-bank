@@ -20,6 +20,10 @@ O sistema utiliza **SQLite** para persistência de dados e implementa **hash de 
 
 ![alt text](/fotos/home.png)
 
+✅ Tela de interface responsiva
+
+![alt text](/fotos/resposividade.png)
+
 --- Em Desenvolvimento ---
 
 
