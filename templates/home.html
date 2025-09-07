@@ -50,10 +50,10 @@
               <p class="text-silver ">Saldo disponível</p>
               <h2 class="balance ">{{session.saldo}}</h2>
             </div>
-            <div class="btn-group">
+            <!-- <div class="btn-group">
               <button class="btn-gold">Transferir</button>
               <button class="btn-outline">Depositar</button>
-            </div>
+            </div> -->
           </div>
           <div class="card-footer">
             <div>
@@ -68,27 +68,39 @@
         </div>
 
         <!-- Quick Actions -->
-        <div class="card" data-aos="fade-right" data-aos-delay="100">
+        <div class="card card-actions" data-aos="fade-right" data-aos-delay="100">
           <div class="title-text-card">
             <h3>Ações rápidas</h3>
           </div>
           <div class="actions">
             <button>
-              <div class="icon"><i data-feather="dollar-sign"></i></div>
+              <div class="icon"><img class="icon-pix" src="/static/icons/pix.svg"></div>
               <span>Pix</span>
+            </button>
+            <button>
+              <div class="icon"><img class="icon-pagamentos" src="/static/icons/pagamentos.png"></div>
+              <span>Pagamentos</span>
+            </button>
+            <button>
+              <div class="icon"><img class="icon-transferir" src="/static/icons/transferir.png"></div>
+              <span>Transferir</span>
+            </button>
+            <button>
+              <div class="icon"><img class="icon-receber" src="/static/icons/transferir.png"></div>
+              <span>Receber</span>
             </button>
             <button>
               <div class="icon"><i data-feather="credit-card"></i></div>
               <span>Cartões</span>
             </button>
             <button>
-              <div class="icon"><i data-feather="trending-up"></i></div>
-              <span>Investir</span>
+              <div class="icon"><i data-feather="pie-chart"></i></div>
+              <span>Finanças</span>
             </button>
-            <button>
+            <!-- <button>
               <div class="icon"><i data-feather="smartphone"></i></div>
               <span>Recargas</span>
-            </button>
+            </button> -->
           </div>
         </div>
 
@@ -183,21 +195,21 @@
       <!-- Investments -->
       <div class="card" data-aos="fade-left" data-aos-delay="100">
         <div class="title-text-card">
-          <h3>Seus investimentos</h3>
+          <h3>Suas finanças</h3>
         </div>
         <div class="investment">
-          <p><span class="text-silver small">Tesouro Direto</span><br>R$ 5.420,00</p>
-          <p class="positive">+2,3%</p>
+          <p><span class="text-silver small"></span>Conta de luz<br></p>
+          <p class="negative">R$ 350,00</p>
         </div>
         <div class="investment">
-          <p><span class="text-silver small">CDB</span><br>R$ 3.150,00</p>
-          <p class="positive">+1,8%</p>
+          <p><span class="text-silver small"></span>Feira<br></p>
+          <p class="negative">R$ 1.000,00</p>
         </div>
         <div class="investment">
-          <p><span class="text-silver small">Fundo Imobiliário</span><br>R$ 2.870,00</p>
-          <p class="negative">-0,5%</p>
+          <p><span class="text-silver small"></span>Fundo Imobiliário<br></p>
+          <p class="positive">R$: 500.00</p>
         </div>
-        <button class="btn-gold full">Ver portfólio completo</button>
+        <button class="btn-gold full">Ver completo</button>
       </div>
 
       <!-- Offers -->
@@ -219,7 +231,7 @@
   <div class="mobile-nav">
     <button class="active"><i data-feather="home"></i> Início</button>
     <button><i data-feather="credit-card"></i> Cartões</button>
-    <button><i data-feather="pie-chart"></i> Investir</button>
+    <button><i data-feather="pie-chart"></i> Finanças</button>
     <button><i data-feather="menu"></i> Mais</button>
   </div>
 

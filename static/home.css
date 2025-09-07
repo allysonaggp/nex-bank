@@ -174,9 +174,10 @@ a:hover {
     margin-bottom: .5rem;
 }
 
+
 .actions {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 1rem;
     height: 4.8rem;
     margin-bottom: 1rem;
@@ -198,6 +199,27 @@ a:hover {
 
 .actions button:hover {
     background: #1a1a1a;
+}
+
+.icon-pix {
+    width: 28px;
+    height: 28px;
+}
+
+.icon-pagamentos {
+    width: 31px;
+    height: 31px;
+}
+
+.icon-transferir {
+    width: 35px;
+    height: 35px;
+}
+
+.icon-receber {
+    transform: rotate(180deg);
+    width: 35px;
+    height: 35px;
 }
 
 .actions .icon {
@@ -391,6 +413,9 @@ a:hover {
 }
 
 
+.mobile-nav {
+    display: none;
+}
 
 @media(max-width:600px) {
     .logo-text {
@@ -442,4 +467,12 @@ a:hover {
         color: #d4af37;
     }
 
+    .actions {
+        display: grid;
+        grid-template-columns: repeat(3, 2fr);
+        gap: 1rem;
+        height: 4.8rem;
+        margin-bottom: 1rem;
+        height: auto;
+    }
 }

@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template, session, redirect, url_for
-from dbapi import consultar_conta_site, inserir_registro, consultar_email,consultar_transacoes,converter_utc_para_local
+from dbapi import consultar_conta_site, inserir_registro, consultar_email,formatar_numero_cartao,consultar_transacoes,converter_utc_para_local
 from dotenv import load_dotenv
 import os
 
@@ -44,7 +44,7 @@ def login():
             .replace(".", ",")
             .replace("X", ".")
         )
-        session["numero_cartao"] = dados["numero_cartao"]
+        session["numero_cartao"] = formatar_numero_cartao(dados["numero_cartao"])
         session["validade_cartao"] = dados["validade_cartao"]
         session["chave_pix"] = dados["chave_pix"]
 

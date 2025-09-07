@@ -59,7 +59,6 @@ def consultar_transacoes(usuario_id):
     return lista_dados
 
 
-
 # Função que cria tabela transaçòes
 def criar_tabela_transacoes(conexao, cursor):
     cursor.execute(
@@ -105,6 +104,19 @@ def cadastro():
     senha = getpass.getpass("Digite sua Senha: ").strip()  # senha escondida
     inserir_registro(nome, email, senha)
     voltar_menu_login()
+
+
+# Formatar numero cartão
+def formatar_numero_cartao(numero):
+    # Remove qualquer caractere não numérico
+    numero = "".join(filter(str.isdigit, str(numero)))
+
+    # Garante que tenha 16 dígitos
+    numero = numero.zfill(16)
+
+    # Divide em blocos de 4 e junta com ponto
+    blocos = [numero[i : i + 4] for i in range(0, 16, 4)]
+    return ".".join(blocos)
 
 
 # Função pra cadastrar Usuário
@@ -296,8 +308,8 @@ def consultar_todos_registros():
 # def consultar_transacoes(usuario_id):
 #     cursor.execute(
 #         """
-#         SELECT id, origem_id, destino_id, valor, tipo, data 
-#         FROM transacoes 
+#         SELECT id, origem_id, destino_id, valor, tipo, data
+#         FROM transacoes
 #         WHERE origem_id = ? OR destino_id = ?
 #         ORDER BY data DESC
 #         """,
