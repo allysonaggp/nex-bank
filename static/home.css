@@ -37,6 +37,7 @@ a:hover {
     justify-content: space-between;
     align-items: center;
 
+
 }
 
 
@@ -58,12 +59,16 @@ a:hover {
 }
 
 
-
-
-
 .nav {
-    display: none;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+
+
 }
+
+
+
 
 
 
@@ -385,6 +390,8 @@ a:hover {
     gap: 1.5rem;
 }
 
+
+
 @media(max-width:600px) {
     .logo-text {
         margin-top: .2rem;
@@ -404,6 +411,9 @@ a:hover {
         gap: 1.5rem;
     }
 
+    .nav {
+        display: none;
+    }
 
     .mobile-nav {
         position: fixed;
