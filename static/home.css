@@ -37,10 +37,12 @@ a:hover {
     justify-content: space-between;
     align-items: center;
 
-
 }
 
+.position-count-number{margin-top:-2.5rem;
+    margin-right: .8rem;
 
+}
 .logo {
     display: flex;
     align-items: center;
@@ -126,6 +128,14 @@ a:hover {
     margin-bottom: -1rem;
 }
 
+.card-footer {
+    border-top: 1px solid #222;
+    padding-top: .5rem;
+    margin-top: 2rem;
+}
+.card-footer-text{
+    margin-bottom: -.5rem;
+}
 .balance-info {
     display: flex;
     flex-direction: column;
@@ -133,11 +143,6 @@ a:hover {
 
 }
 
-.card-footer {
-    border-top: 1px solid #222;
-    padding-top: .5rem;
-    margin-top: 2rem;
-}
 
 /* Buttons */
 .btn-gold {

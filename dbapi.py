@@ -5,6 +5,7 @@ from pathlib import Path
 from utils import hash_senha, limpar_tela
 from datetime import datetime
 from zoneinfo import ZoneInfo
+import random
 
 ROOT_PATH = Path(__file__).parent
 conexao = sqlite3.connect(ROOT_PATH / "banco_de_dados.db")
@@ -119,33 +120,7 @@ def formatar_numero_cartao(numero):
     return ".".join(blocos)
 
 
-# Função pra cadastrar Usuário
-def inserir_registro(nome, email, cpf, senha):
-    senha_hash = hash_senha(senha)  # <-- aplica hash
-    conn = sqlite3.connect("banco_de_dados.db", check_same_thread=False)
-    cursor = conn.cursor()
-    if consultar_email(email):
-        print("Email já cadastrado, tente outro!")
-        return
-    else:
-        cursor.execute("SELECT COUNT(id) FROM usuarios;")
-        total_cadastrados = cursor.fetchone()[0]
-
-        if total_cadastrados > 1 and total_cadastrados <= 5:
-            data = (nome, email, cpf, senha_hash, 100, 0, 0)
-        else:
-            data = (nome, email, cpf, senha_hash, 0, 0, 0)
-
-        cursor.execute(
-            "INSERT INTO usuarios(nome,email,cpf,senha,saldo,credito,privilegio) VALUES(?,?,?,?,?,?,?)",
-            data,
-        )
-        conn.commit()
-        print(f"\nusuario {nome} cadastrado com sucesso!")
-        conn.close()
-
-
-# Funçào consultar conta site
+# Funçào consultar email site
 def consultar_email(email):
     data = (email,)
     # Cria conexão dentro da função
@@ -157,6 +132,75 @@ def consultar_email(email):
 
     conn.close()
     return resultado
+
+
+# Funçào consultar cartao site
+def consultar_cartao(cartao):
+    data = (cartao,)
+    # Cria conexão dentro da função
+    conn = sqlite3.connect("banco_de_dados.db", check_same_thread=False)
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM usuarios WHERE numero_cartao=?", (data))
+    resultado = cursor.fetchone()
+
+    conn.close()
+    return resultado
+
+
+#  Função pra gerar o numero do cartao de credito
+def gerador_numero_cartao():
+    numero = []
+    for i in range(16):
+        i = random.randrange(0, 9)
+        numero.append(i)
+    numero = "".join(str(n) for n in numero)
+    # print(f'numero gerado: {numero}')
+    return numero
+
+
+# funcao criar cartao de credito
+def criar_cartao_credito():
+    verificador = False
+    while verificador == False:
+        numero = gerador_numero_cartao()
+        if consultar_cartao(numero) == True:
+            print("cartao ja cadastrado")
+        else:
+            # print(f'numero não cadastrado: {numero}')
+            verificador = True
+            print(numero)
+            return numero
+
+
+# Função pra cadastrar Usuário
+def inserir_registro(nome, email, cpf, senha):
+    senha_hash = hash_senha(senha)  # <-- aplica hash
+    conn = sqlite3.connect("banco_de_dados.db", check_same_thread=False)
+    cursor = conn.cursor()
+    if consultar_email(email):
+        print("Email já cadastrado, tente outro!")
+        return
+    else:
+        cursor.execute("SELECT COUNT(id) FROM usuarios;")
+        total_cadastrados = cursor.fetchone()[0]
+        cartao = criar_cartao_credito()
+
+        if total_cadastrados > 1 and total_cadastrados <= 5:
+            data = (nome, email, cpf, senha_hash, 100, 0, 0, cartao)
+        else:
+            data = (nome, email, cpf, senha_hash, 0, 0, 0, cartao)
+
+        cursor.execute(
+            "INSERT INTO usuarios(nome,email,cpf,senha,saldo,credito,privilegio,numero_cartao) VALUES(?,?,?,?,?,?,?,?)",
+            data,
+        )
+        conn.commit()
+        print(f"\nusuario {nome} cadastrado com sucesso!")
+        conn.close()
+
+
+
 
 
 # Funçào consultar conta site

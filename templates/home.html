@@ -50,18 +50,19 @@
               <p class="text-silver ">Saldo disponível</p>
               <h2 class="balance ">{{session.saldo}}</h2>
             </div>
-            <!-- <div class="btn-group">
-              <button class="btn-gold">Transferir</button>
-              <button class="btn-outline">Depositar</button>
-            </div> -->
+            <div class="btn-group">
+                <p class="position-count-number">Conta N: {{session.conta}}</p>
+              <!-- <button class="btn-gold">Transferir</button>
+              <button class="btn-outline">Depositar</button> -->
+            </div>
           </div>
           <div class="card-footer">
             <div>
-              <p class="text-silver small">Cartão digital</p>
+              <p class="text-silver small card-footer-text">Cartão digital</p>
               <p>{{session.numero_cartao}}</p>
             </div>
             <div>
-              <p class="text-silver small">Limite disponível</p>
+              <p class="text-silver small card-footer-text">Limite disponível</p>
               <p>{{session.credito}}</p>
             </div>
           </div>
@@ -78,16 +79,16 @@
               <span>Pix</span>
             </button>
             <button>
-              <div class="icon"><img class="icon-pagamentos" src="/static/icons/pagamentos.png"></div>
-              <span>Pagamentos</span>
-            </button>
-            <button>
               <div class="icon"><img class="icon-transferir" src="/static/icons/transferir.png"></div>
               <span>Transferir</span>
             </button>
             <button>
               <div class="icon"><img class="icon-receber" src="/static/icons/transferir.png"></div>
               <span>Receber</span>
+            </button>
+            <button>
+              <div class="icon"><img class="icon-pagamentos" src="/static/icons/pagamentos.png"></div>
+              <span>Pagamentos</span>
             </button>
             <button>
               <div class="icon"><i data-feather="credit-card"></i></div>
