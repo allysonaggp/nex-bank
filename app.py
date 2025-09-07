@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template, session, redirect, url_for
-from dbapi import consultar_conta_site, inserir_registro, consultar_email
+from dbapi import consultar_conta_site, inserir_registro, consultar_email,consultar_transacoes,converter_utc_para_local
 from dotenv import load_dotenv
 import os
 
@@ -30,10 +30,10 @@ def login():
 
     dados = consultar_conta_site(usuario, senha)
     if dados:
-        session["usuario"] = dados["nome"]
         session["conta"] = dados["id"]
-        session["email"] = dados["email"]
+        session["usuario"] = dados["nome"]
         session["cpf"] = dados["cpf"]
+        session["email"] = dados["email"]
         session["saldo"] = (
             f"R$: {dados['saldo']:,.2f}".replace(",", "X")
             .replace(".", ",")
@@ -44,9 +44,26 @@ def login():
             .replace(".", ",")
             .replace("X", ".")
         )
+        session["numero_cartao"] = dados["numero_cartao"]
+        session["validade_cartao"] = dados["validade_cartao"]
+        session["chave_pix"] = dados["chave_pix"]
+
+        lista_dados = consultar_transacoes(session["conta"])
+        if lista_dados:
+            primeira = lista_dados[0]
+            session["transacao"] = primeira["transacao"]
+            session["origem"] = primeira["origem"]
+            session["destino"] = primeira["destino"]
+            session["valor"] = primeira["valor"]
+            session["tipo"] = primeira["tipo"]
+            session["data"] = converter_utc_para_local(primeira["data"])
+        else:
+            session["transacao"] = None  # ou algum valor padrão
+
         return render_template("home.html")
     else:
         return render_template("index.html", erro="Usuário ou senha incorretos")
+
 
 
 @app.route("/cadastro", methods=["POST"])

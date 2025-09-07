@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,7 @@
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 </head>
+
 <body>
   <!-- Background Animation -->
   <div id="vanta-bg"></div>
@@ -56,7 +58,7 @@
           <div class="card-footer">
             <div>
               <p class="text-silver small">Cartão digital</p>
-              <p>•••• •••• •••• 4532</p>
+              <p>{{session.numero_cartao}}</p>
             </div>
             <div>
               <p class="text-silver small">Limite disponível</p>
@@ -97,6 +99,24 @@
             <a class="link">Ver todas</a>
           </div>
           <div class="transactions">
+          {% for t in transacoes %}
+          <div class="transaction">
+            <div class="tx-info">
+              <div class="tx-icon">
+                <!-- Ícone pode variar conforme o tipo da transação -->
+                <i data-feather="{{ 'arrow-down-circle' if t.tipo == 'entrada' else 'arrow-up-circle' }}"></i>
+              </div>
+              <div>
+                <p class="transaction-details-text">{{ t.descricao }}</p>
+                <p class="text-silver small">{{ t.data }}</p>
+              </div>
+            </div>
+            <p class="{{ 'positive' if t.tipo == 'entrada' else 'negative' }}">
+              {{ '-' if t.tipo == 'saída' else '+' }} R$ {{ "%.2f"|format(t.valor)|replace('.', ',') }}
+            </p>
+          </div>
+          {% endfor %}
+          <!-- 
             <div class="transaction">
               <div class="tx-info">
                 <div class="tx-icon"><i data-feather="shopping-bag"></i></div>
@@ -126,82 +146,82 @@
                 </div>
               </div>
               <p class="negative">- R$ 18,50</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right Column -->
-      <div class="right-col">
-        <!-- Credit Card -->
-        <div class="card" data-aos="fade-left">
-          <div class="credit-card">
-            <div class="cc-header">
-              <div class="div-card-number">
-                <p class="text-silver small">Cartão Black</p>
-                <p class="card-number">•••• •••• •••• 4532</p>
-              </div>
-              <div class="cc-logo">BLACK</div>
-            </div>
-            <div class="cc-footer">
-              <div clas>
-                <p class="text-silver small card-text-foot-position">Titular</p>
-                <p>{{session.usuario}}</p>
-              </div>
-              <div>
-                <p class="text-silver small card-text-foot-position">Válido até</p>
-                <p class="card-valid-date">05/28</p>
-              </div>
-            </div>
-          </div>
-          <div class="cc-actions">
-            <button><i data-feather="eye"></i> Ver CVV</button>
-            <button><i data-feather="credit-card"></i> Detalhes</button>
-          </div>
-        </div>
-
-        <!-- Investments -->
-        <div class="card" data-aos="fade-left" data-aos-delay="100">
-          <div class="title-text-card">
-          <h3>Seus investimentos</h3>
-          </div>
-          <div class="investment">
-            <p><span class="text-silver small">Tesouro Direto</span><br>R$ 5.420,00</p>
-            <p class="positive">+2,3%</p>
-          </div>
-          <div class="investment">
-            <p><span class="text-silver small">CDB</span><br>R$ 3.150,00</p>
-            <p class="positive">+1,8%</p>
-          </div>
-          <div class="investment">
-            <p><span class="text-silver small">Fundo Imobiliário</span><br>R$ 2.870,00</p>
-            <p class="negative">-0,5%</p>
-          </div>
-          <button class="btn-gold full">Ver portfólio completo</button>
-        </div>
-
-        <!-- Offers -->
-        <div class="card" data-aos="fade-left" data-aos-delay="200">
-          <div class="title-text-card">
-          <h3>Ofertas para você</h3>
-          </div>
-          <div class="offer">
-            <p>Empréstimo pessoal com taxas especiais</p>
-            <p class="text-gold small">Taxa a partir de 1,29% ao mês</p>
-            <button class="btn-outline small">Simular</button>
-          </div>
+            </div> -->
         </div>
       </div>
     </div>
-  </main>
 
-  <!-- Mobile Navigation
+    <!-- Right Column -->
+    <div class="right-col">
+      <!-- Credit Card -->
+      <div class="card" data-aos="fade-left">
+        <div class="credit-card">
+          <div class="cc-header">
+            <div class="div-card-number">
+              <p class="text-silver small">Cartão Black</p>
+              <p class="card-number">{{session.numero_cartao}}</p>
+            </div>
+            <div class="cc-logo">BLACK</div>
+          </div>
+          <div class="cc-footer">
+            <div clas>
+              <p class="text-silver small card-text-foot-position">Titular</p>
+              <p>{{session.usuario}}</p>
+            </div>
+            <div>
+              <p class="text-silver small card-text-foot-position">Válido até</p>
+              <p class="card-valid-date">{{session.validade_cartao}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="cc-actions">
+          <button><i data-feather="eye"></i> Ver CVV</button>
+          <button><i data-feather="credit-card"></i> Detalhes</button>
+        </div>
+      </div>
+
+      <!-- Investments -->
+      <div class="card" data-aos="fade-left" data-aos-delay="100">
+        <div class="title-text-card">
+          <h3>Seus investimentos</h3>
+        </div>
+        <div class="investment">
+          <p><span class="text-silver small">Tesouro Direto</span><br>R$ 5.420,00</p>
+          <p class="positive">+2,3%</p>
+        </div>
+        <div class="investment">
+          <p><span class="text-silver small">CDB</span><br>R$ 3.150,00</p>
+          <p class="positive">+1,8%</p>
+        </div>
+        <div class="investment">
+          <p><span class="text-silver small">Fundo Imobiliário</span><br>R$ 2.870,00</p>
+          <p class="negative">-0,5%</p>
+        </div>
+        <button class="btn-gold full">Ver portfólio completo</button>
+      </div>
+
+      <!-- Offers -->
+      <div class="card" data-aos="fade-left" data-aos-delay="200">
+        <div class="title-text-card">
+          <h3>Ofertas para você</h3>
+        </div>
+        <div class="offer">
+          <p>Empréstimo pessoal com taxas especiais</p>
+          <p class="text-gold small">Taxa a partir de 1,29% ao mês</p>
+          <button class="btn-outline small">Simular</button>
+        </div>
+      </div>
+    </div>
+    </div>
+  </main>
+<!-- 
+  Mobile Navigation -->
   <div class="mobile-nav">
     <button class="active"><i data-feather="home"></i> Início</button>
     <button><i data-feather="credit-card"></i> Cartões</button>
     <button><i data-feather="pie-chart"></i> Investir</button>
     <button><i data-feather="menu"></i> Mais</button>
-  </div> -->
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
   <script>
@@ -223,4 +243,5 @@
     feather.replace();
   </script>
 </body>
+
 </html>

@@ -36,7 +36,7 @@ a:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
+
 }
 
 
@@ -54,7 +54,7 @@ a:hover {
     margin-bottom: 0.5rem;
     margin-top: .2rem;
     margin-left: 4rem;
-    
+
 }
 
 
@@ -65,14 +65,9 @@ a:hover {
     display: none;
 }
 
-@media(min-width:768px) {
-    .nav {
-        display: flex;
-        gap: 1.5rem;
-    }
-}
 
-.header-actions{
+
+.header-actions {
     margin-right: 4.5rem;
 }
 
@@ -89,7 +84,7 @@ a:hover {
 
 .header-actions button:hover {
     background: #1a1a1a;
-    
+
 }
 
 /* Main Layout */
@@ -101,16 +96,11 @@ a:hover {
 
 .grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 2fr 1fr;
     gap: 1.5rem;
     padding: 0 4rem;
 }
 
-@media(min-width:1024px) {
-    .grid {
-        grid-template-columns: 2fr 1fr;
-    }
-}
 
 /* Cards */
 .card {
@@ -243,7 +233,7 @@ a:hover {
     gap: .75rem;
 }
 
-.transaction-details {}
+/* .transaction-details {} */
 
 .transaction-details-text {
     margin-top: 1rem;
@@ -273,7 +263,7 @@ a:hover {
     justify-content: space-between;
 }
 
-.cc-header{
+.cc-header {
     display: flex;
     justify-content: space-between;
 }
@@ -281,13 +271,15 @@ a:hover {
 .cc-footer {
     display: flex;
     justify-content: space-between;
-    margin-top:1rem;
+    margin-top: 1rem;
 }
-.card-text-foot-position{
+
+.card-text-foot-position {
     margin-top: 1.5rem;
     margin-bottom: -.5rem;
 }
-.card-valid-date{
+
+.card-valid-date {
     margin-left: 0.7rem;
 }
 
@@ -301,7 +293,7 @@ a:hover {
 
 .card-number {
     margin-top: -1rem;
-   
+
 }
 
 .cc-logo {
@@ -345,33 +337,7 @@ a:hover {
     padding: 1rem;
 }
 
-/* Mobile Nav */
-.mobile-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #0a0a0a;
-    border-top: 1px solid #1a1a1a;
-    display: flex;
-    justify-content: space-around;
-    padding: .75rem 0;
-}
 
-.mobile-nav button {
-    background: none;
-    border: none;
-    color: #c0c0c0;
-    font-size: .75rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: .25rem;
-}
-
-.mobile-nav button.active {
-    color: #d4af37;
-}
 
 /* Helpers */
 .text-silver {
@@ -417,4 +383,53 @@ a:hover {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+}
+
+@media(max-width:600px) {
+    .logo-text {
+        margin-top: .2rem;
+        margin-left: .7rem;
+
+    }
+
+    .header-actions {
+        margin-right: .5rem;
+    }
+
+    .grid {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+
+        gap: 1.5rem;
+    }
+
+
+    .mobile-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #0a0a0a;
+        border-top: 1px solid #1a1a1a;
+        display: flex;
+        justify-content: space-around;
+        padding: .75rem 0;
+    }
+
+    .mobile-nav button {
+        background: none;
+        border: none;
+        color: #c0c0c0;
+        font-size: .75rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: .02rem;
+    }
+
+    .mobile-nav button.active {
+        color: #d4af37;
+    }
+
 }

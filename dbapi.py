@@ -22,9 +22,42 @@ def converter_utc_para_local(utc_str, fuso_local="America/Recife"):
 # Função que cria a tabela
 def criar_tabela_usuarios(conexao, cursor):
     cursor.execute(
-        "CREATE TABLE IF NOT EXISTS usuarios (id INTEGER PRIMARY KEY AUTOINCREMENT, nome VARCHAR(100),email VARCHAR(150),senha VARCHAR(150),privilegio INTEGER,saldo FLOAT,credito FLOAT,cpf INTEGER)"
+        "CREATE TABLE IF NOT EXISTS usuarios (id INTEGER PRIMARY KEY AUTOINCREMENT, nome VARCHAR(100),cpf INTEGER,email VARCHAR(150),senha VARCHAR(150),saldo FLOAT,credito FLOAT,numero_cartao INTERGER,validade_cartao VARRCHAR(5),chave_pix VARCHAR(50),privilegio INTEGER)"
     )
     print("Tabela criada com Sucesso!")
+
+
+# Função consultar transaçoes site
+def consultar_transacoes(usuario_id):
+    conn = sqlite3.connect("banco_de_dados.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT * FROM transacoes 
+        WHERE origem_id = ? OR destino_id = ?
+        ORDER BY data DESC
+        """,
+        (usuario_id, usuario_id),
+    )
+    transacoes = cursor.fetchall()
+    conn.close()
+
+    lista_dados = []
+    for t in transacoes:
+        dados = {
+            "transacao": t[0],
+            "origem": t[1],
+            "destino": t[2],
+            "descricao": t[3],
+            "valor": t[4],
+            "tipo": t[5],
+            "data": t[6],
+        }
+        lista_dados.append(dados)
+
+    return lista_dados
+
 
 
 # Função que cria tabela transaçòes
@@ -35,6 +68,7 @@ def criar_tabela_transacoes(conexao, cursor):
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             origem_id INTEGER,
             destino_id INTEGER,
+            descricao VARCHAR(100),
             valor FLOAT,
             tipo TEXT,
             data TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -128,29 +162,44 @@ def consultar_conta_site(usuario, senha):
     conn.close()
 
     if result:
-        dados ={
+        dados = {
             "id": result[0],
             "nome": result[1],
-            "email": result[2],
+            "cpf": result[2],
+            "email": result[3],
             "saldo": result[5],
             "credito": result[6],
-            "cpf": result[7],
+            "numero_cartao": result[7],
+            "validade_cartao": result[8],
+            "chave_pix": result[9],
         }
         return dados
     else:
         return None
 
+
 # Função para cadastrar um administrador
-def inserir_registro_administrador(nome, email, senha):
+def inserir_registro_administrador(nome, cpf, email, senha, numero_cartao, chave_pix):
     senha_hash = hash_senha(senha)
     cursor.execute("SELECT COUNT(id) FROM usuarios;")
     total_cadastrados = cursor.fetchone()[0]
 
     if total_cadastrados == 0:
 
-        data = (nome, email, senha_hash, 1, 0, 0)
+        data = (
+            nome,
+            cpf,
+            email,
+            senha_hash,
+            1,
+            0,
+            numero_cartao,
+            0,
+            chave_pix,
+            "08/32",
+        )
         cursor.execute(
-            "INSERT INTO usuarios(nome,email,senha,privilegio,saldo,credito) VALUES(?,?,?,?,?,?)",
+            "INSERT INTO usuarios(nome,cpf,email,senha,privilegio,saldo,numero_cartao,credito,chave_pix,validade_cartao) VALUES(?,?,?,?,?,?,?,?,?,?)",
             data,
         )
         conexao.commit()
@@ -184,7 +233,14 @@ def cabecalho(nome):
 def iniciar():
     criar_tabela_usuarios(conexao, cursor)
     criar_tabela_transacoes(conexao, cursor)
-    inserir_registro_administrador("admin", "admin@nexbank.com", "admin")
+    inserir_registro_administrador(
+        "admin",
+        "000.000.000-00",
+        "admin@nexbank.com",
+        "admin",
+        "0000.0000.0000.0000",
+        "admin@nexbank.com",
+    )
 
 
 # Função para atualizar dados
@@ -237,35 +293,35 @@ def consultar_todos_registros():
 
 
 # Função consultar transaçoes
-def consultar_transacoes(usuario_id):
-    cursor.execute(
-        """
-        SELECT id, origem_id, destino_id, valor, tipo, data 
-        FROM transacoes 
-        WHERE origem_id = ? OR destino_id = ?
-        ORDER BY data DESC
-        """,
-        (usuario_id, usuario_id),
-    )
-    transacoes = cursor.fetchall()
+# def consultar_transacoes(usuario_id):
+#     cursor.execute(
+#         """
+#         SELECT id, origem_id, destino_id, valor, tipo, data 
+#         FROM transacoes 
+#         WHERE origem_id = ? OR destino_id = ?
+#         ORDER BY data DESC
+#         """,
+#         (usuario_id, usuario_id),
+#     )
+#     transacoes = cursor.fetchall()
 
-    if not transacoes:
-        nome = "Histórico de Transações:"
-        linha = "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
-        print(linha)
-        print(f"{nome:^{len(linha)}}")
-        print("\nNenhuma transação encontrada.\n")
-    else:
-        limpar_tela()
-        nome = "Histórico de Transações:"
-        linha = "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
-        print(linha)
-        print(f"{nome:^{len(linha)}}")
-        print(linha)
-        for t in transacoes:
-            print(
-                f"Data: {converter_utc_para_local(t[5])} | Transaçao N: {t[0]} | Origem: {t[1]} | Destino: {t[2]} | Valor: {t[3]:.2f} | Tipo: {t[4]}"
-            )
+#     if not transacoes:
+#         nome = "Histórico de Transações:"
+#         linha = "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+#         print(linha)
+#         print(f"{nome:^{len(linha)}}")
+#         print("\nNenhuma transação encontrada.\n")
+#     else:
+#         limpar_tela()
+#         nome = "Histórico de Transações:"
+#         linha = "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+#         print(linha)
+#         print(f"{nome:^{len(linha)}}")
+#         print(linha)
+#         for t in transacoes:
+#             print(
+#                 f"Data: {converter_utc_para_local(t[5])} | Transaçao N: {t[0]} | Origem: {t[1]} | Destino: {t[2]} | Valor: {t[3]:.2f} | Tipo: {t[4]} "
+#             )
 
 
 # Função para voltar ao menu de login
