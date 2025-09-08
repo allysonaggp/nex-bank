@@ -1,22 +1,41 @@
 from flask import Flask, request, render_template, session, redirect, url_for
+from datetime import datetime
+from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
+
+
+import os
 from dbapi import (
     consultar_conta_site,
     inserir_registro,
     consultar_email,
     formatar_numero_cartao,
     consultar_transacoes,
-    iniciar,
     transferir_saldo,
     consultar_id,
-    consultar_site,
+    inserir_registro_administrador,
+    db,
 )
-from dotenv import load_dotenv
-import os
 
-iniciar()
+
 load_dotenv()
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("secret_key_postgres")
+# app.config["SQLALCHEMY_DATABASE_URI"] = ("sqlite:///nexbank_local.db")
+
 app.secret_key = os.getenv("secret_key")  # Chave secreta para sessões
+db.init_app(app)
+
+
+# Função iniciar
+def iniciar():
+    with app.app_context():
+        db.create_all()
+        inserir_registro_administrador("admin")
+    if app.config == os.getenv("secret_key_postgres"):
+        print("Servidor esta rodando Online")
+    else:
+        print("Servidor esta rodando Local")
 
 
 @app.route("/home", methods=["GET"])
@@ -118,16 +137,18 @@ def registrar():
 
 @app.route("/transacao", methods=["POST"])
 def tranferir():
-    dados = consultar_id(session["conta"])
+    usuario = consultar_id(session["conta"])
+    if not usuario:
+        return "Erro: Usuario não encontrado."
     descricao = request.form["descricao"]
     conta_a_receber = int(request.form["cont-number"])
     valor_a_transferir = float(request.form["valor"])
-    saldo = dados[5]
+    saldo = usuario["saldo"]
 
     if saldo >= valor_a_transferir and saldo > 0:
         print(
             transferir_saldo(
-                session["conta"], conta_a_receber, valor_a_transferir, descricao, saldo
+                usuario["id"], conta_a_receber, valor_a_transferir, descricao, saldo
             )
         )
 
@@ -145,4 +166,5 @@ def logout():
 
 
 if __name__ == "__main__":
+    iniciar()
     app.run(debug=True)

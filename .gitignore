@@ -1,2 +1,5 @@
 .env
 banco_de_dados.db
+codigos a iplementar.py
+instance/
+__pycache__/
