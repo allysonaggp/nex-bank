@@ -22,7 +22,7 @@ O sistema utiliza **SQLite** para persistência de dados e implementa **hash de 
 
 ✅ Tela de Transferência
 
-![alt text](/fotos/transferencia.png.png)
+![alt text](/fotos/transferencia.png)
 
 ✅ Tela de interface responsiva
 
