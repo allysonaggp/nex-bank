@@ -23,7 +23,7 @@ def converter_utc_para_local(utc_str, fuso_local="America/Recife"):
 # Função que cria a tabela
 def criar_tabela_usuarios(conexao, cursor):
     cursor.execute(
-        "CREATE TABLE IF NOT EXISTS usuarios (id INTEGER PRIMARY KEY AUTOINCREMENT, nome VARCHAR(100),cpf INTEGER,email VARCHAR(150),senha VARCHAR(150),saldo FLOAT,credito FLOAT,numero_cartao INTERGER,validade_cartao VARRCHAR(5),chave_pix VARCHAR(50),privilegio INTEGER)"
+        "CREATE TABLE IF NOT EXISTS usuarios (id INTEGER PRIMARY KEY AUTOINCREMENT, nome VARCHAR(100),cpf VARCHAR(9),email VARCHAR(150),senha VARCHAR(150),saldo FLOAT,credito FLOAT,numero_cartao INTERGER,validade_cartao VARRCHAR(5),chave_pix VARCHAR(50),privilegio INTEGER)"
     )
     print("Tabela criada com Sucesso!")
 
@@ -62,6 +62,7 @@ def consultar_transacoes(minha_conta):
         ORDER BY data DESC
     """,
         (minha_conta, minha_conta),
+        
     )
 
     resultado = cursor.fetchall()
@@ -196,20 +197,20 @@ def consultar_site(id):
     cursor = conn.cursor()
 
     cursor.execute("SELECT * FROM usuarios WHERE id=?", (data))
-    resultado = cursor.fetchone()
-    resultado = {
-        "id": resultado[0],
-        "nome": resultado[1],
-        "cpf": resultado[2],
-        "email": resultado[3],
-        "saldo": resultado[5],
-        "credito": resultado[6],
-        "numero_cartao": resultado[7],
-        "validade_cartao": resultado[8],
-        "chave_pix": resultado[9],
+    dados = cursor.fetchone()
+    dados = {
+        "id": dados[0],
+        "nome": dados[1],
+        "cpf": dados[2],
+        "email": dados[3],
+        "saldo": dados[5],
+        "credito": dados[6],
+        "numero_cartao": dados[7],
+        "validade_cartao": dados[8],
+        "chave_pix": dados[9],
     }
 
-    return resultado
+    return dados
 
 
 # Funçào consultar cartao site
@@ -217,6 +218,7 @@ def consultar_id(id):
     data = (id,)
     # Cria conexão dentro da função
     conn = sqlite3.connect("banco_de_dados.db", check_same_thread=False)
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
     cursor.execute("SELECT * FROM usuarios WHERE id=?", (data))
@@ -301,7 +303,7 @@ def consultar_conta_site(usuario, senha):
     cursor = conn.cursor()
 
     cursor.execute(
-        "SELECT * FROM usuarios WHERE nome=? AND senha=?", (usuario, senha_hash)
+        "SELECT * FROM usuarios WHERE email=? AND senha=?", (usuario, senha_hash)
     )
     result = cursor.fetchone()
     conn.close()

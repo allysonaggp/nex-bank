@@ -19,6 +19,18 @@ app = Flask(__name__)
 app.secret_key = os.getenv("secret_key")  # Chave secreta para sessões
 
 
+@app.route("/home", methods=["GET"])
+def home():
+    dados = consultar_id(session["conta"])  # busca no banco
+    session["saldo"] = (
+        f"R$: {dados['saldo']:,.2f}".replace(",", "X")
+        .replace(".", ",")
+        .replace("X", ".")
+    )
+    lista_dados = consultar_transacoes(session["conta"])
+    return render_template("home.html", transacoes=lista_dados)
+
+
 @app.template_filter("formata_real")
 def formata_real(valor):
     return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
@@ -37,16 +49,17 @@ def transferir():
     )  # pagina de transferir
 
 
-@app.route("/transferir")
-def dados_site():
-    lista_dados = consultar_site(session["conta"])
-    return render_template("transferir.html", dados=lista_dados)  # pagina de transferir
+# @app.route("/transferir")
+# def dados_site():
+#     lista_dados = consultar_site(session["conta"])
+#     return render_template("transferir.html", dados=lista_dados)
+#     # pagina de transferir
 
 
-@app.route("/home", methods=["GET"])
-def home():
-    lista_dados = consultar_transacoes(session["conta"])
-    return render_template("home.html", transacoes=lista_dados)  # pagina de login
+# @app.route("/home", methods=["GET"])
+# def home():
+#     lista_dados = consultar_transacoes(session["conta"])
+#     return render_template("home.html", transacoes=lista_dados)  # pagina de login
 
 
 @app.route("/cadastro")
@@ -112,9 +125,12 @@ def tranferir():
     saldo = dados[5]
 
     if saldo >= valor_a_transferir and saldo > 0:
-        transferir_saldo(
-            session["conta"], conta_a_receber, valor_a_transferir, descricao, saldo
+        print(
+            transferir_saldo(
+                session["conta"], conta_a_receber, valor_a_transferir, descricao, saldo
+            )
         )
+
         print("transação realizada com sucesso")
         return redirect("/home")
     else:
