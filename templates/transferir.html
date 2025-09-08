@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NexBank | Banco Digital</title>
-  <link rel="stylesheet" href="/static/home.css">
+  <link rel="stylesheet" href="/static/transferir.css">
 
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -73,40 +73,34 @@
         <!-- Quick Actions -->
         <div class="card card-actions" data-aos="fade-right" data-aos-delay="100">
           <div class="title-text-card">
-            <h3>Ações rápidas</h3>
+            <h3>Transferência</h3>
           </div>
           <div class="actions">
-            <button>
-              <div class="icon"><img class="icon-pix" src="/static/icons/pix.svg"></div>
-              <span>Pix</span>
-            </button>
-            <a href="{{url_for('transferir')}}">
-              <button>
-                <div class="icon"><img class="icon-transferir" src="/static/icons/transferir.png"></div>
-                <span>Transferir</span>
-              </button></a>
-            <button>
-              <div class="icon"><img class="icon-receber" src="/static/icons/transferir.png"></div>
-              <span>Receber</span>
-            </button>
-            <button>
-              <div class="icon"><img class="icon-pagamentos" src="/static/icons/pagamentos.png"></div>
-              <span>Pagamentos</span>
-            </button>
-            <button>
-              <div class="icon"><i data-feather="credit-card"></i></div>
-              <span>Cartões</span>
-            </button>
-            <button>
-              <div class="icon"><i data-feather="pie-chart"></i></div>
-              <span>Finanças</span>
-            </button>
-            <!-- <button>
-              <div class="icon"><i data-feather="smartphone"></i></div>
-              <span>Recargas</span>
-            </button> -->
+            <form class="form-transfer" method="post" action="/transacao">
+              <!-- numero da conta -->
+              <div class="form-transfers">
+                <div class="">
+                  <label for="numero">Descrição:</label>
+                  <input class="form-imput" type="text" name="descricao" id="descricao" placeholder="" required>
+                </div>
+                <div class="">
+                  <label for="numero">Numero da conta</label>
+                  <input class="form-imput" type="number" name="cont-number" id="cont-number" placeholder="" required>
+                </div>
+                <!-- valor a ser transferido -->
+                <div class="">
+                  <label for="numero">Valor</label>
+                  <input class="form-imput" type="number" name="valor" id="valor" placeholder="" required>
+                </div>
+              </div>
+              <!-- botao transferir -->
+              <div>
+                <button type="submit" class="btn-transfer">Transferir</button>
+              </div>
           </div>
         </div>
+
+
 
         <!-- Transactions -->
         <div class="card" data-aos="fade-right" data-aos-delay="200">
@@ -115,7 +109,7 @@
             <a class="link">Ver todas</a>
           </div>
           <div class="transactions">
-            {% for transacao in transacoes %}
+             {% for transacao in transacoes %}
             <div class="transaction">
               <div class="tx-info">
                 <div class="tx-icon"><i data-feather="shopping-bag"></i></div>
@@ -136,10 +130,10 @@
               </p>
             </div>
             {% endfor %}
-
           </div>
         </div>
       </div>
+
 
       <!-- Right Column -->
       <div class="right-col">

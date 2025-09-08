@@ -5,14 +5,23 @@ from dbapi import (
     consultar_email,
     formatar_numero_cartao,
     consultar_transacoes,
-    converter_utc_para_local,
+    iniciar,
+    transferir_saldo,
+    consultar_id,
+    consultar_site,
 )
 from dotenv import load_dotenv
 import os
 
+iniciar()
 load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("secret_key")  # Chave secreta para sessões
+
+
+@app.template_filter("formata_real")
+def formata_real(valor):
+    return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 
 @app.route("/")
@@ -20,14 +29,32 @@ def index():
     return render_template("index.html")  # pagina de login
 
 
-@app.route("/home")
+@app.route("/transferir")
+def transferir():
+    lista_dados = consultar_transacoes(session["conta"])
+    return render_template(
+        "transferir.html", transacoes=lista_dados
+    )  # pagina de transferir
+
+
+@app.route("/transferir")
+def dados_site():
+    lista_dados = consultar_site(session["conta"])
+    return render_template("transferir.html", dados=lista_dados)  # pagina de transferir
+
+
+@app.route("/home", methods=["GET"])
 def home():
-    return render_template("home.html")  # pagina de login
+    lista_dados = consultar_transacoes(session["conta"])
+    return render_template("home.html", transacoes=lista_dados)  # pagina de login
 
 
 @app.route("/cadastro")
 def cadastro():
-    return render_template("cadastro.html")  # pagina de login
+
+    return render_template(
+        "cadastro.html",
+    )  # pagina de login
 
 
 @app.route("/login", methods=["POST"])
@@ -56,18 +83,8 @@ def login():
         session["chave_pix"] = dados["chave_pix"]
 
         lista_dados = consultar_transacoes(session["conta"])
-        if lista_dados:
-            primeira = lista_dados[0]
-            session["transacao"] = primeira["transacao"]
-            session["origem"] = primeira["origem"]
-            session["destino"] = primeira["destino"]
-            session["valor"] = primeira["valor"]
-            session["tipo"] = primeira["tipo"]
-            session["data"] = converter_utc_para_local(primeira["data"])
-        else:
-            session["transacao"] = None  # ou algum valor padrão
 
-        return render_template("home.html")
+        return render_template("home.html", transacoes=lista_dados)
     else:
         return render_template("index.html", erro="Usuário ou senha incorretos")
 
@@ -84,6 +101,25 @@ def registrar():
     else:
         inserir_registro(usuario, email, cpf, senha)
         return render_template("index.html")
+
+
+@app.route("/transacao", methods=["POST"])
+def tranferir():
+    dados = consultar_id(session["conta"])
+    descricao = request.form["descricao"]
+    conta_a_receber = int(request.form["cont-number"])
+    valor_a_transferir = float(request.form["valor"])
+    saldo = dados[5]
+
+    if saldo >= valor_a_transferir and saldo > 0:
+        transferir_saldo(
+            session["conta"], conta_a_receber, valor_a_transferir, descricao, saldo
+        )
+        print("transação realizada com sucesso")
+        return redirect("/home")
+    else:
+        print("transação nao realizada")
+        return render_template("transferir.html")
 
 
 @app.route("/logout")
