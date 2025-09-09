@@ -20,8 +20,8 @@ from dbapi import (
 
 load_dotenv()
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("secret_key_postgres")
-# app.config["SQLALCHEMY_DATABASE_URI"] = ("sqlite:///nexbank_local.db")
+#app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("secret_key_postgres")
+app.config["SQLALCHEMY_DATABASE_URI"] = ("sqlite:///nexbank_local.db")
 
 app.secret_key = os.getenv("secret_key")  # Chave secreta para sessões
 db.init_app(app)
@@ -68,17 +68,6 @@ def transferir():
     )  # pagina de transferir
 
 
-# @app.route("/transferir")
-# def dados_site():
-#     lista_dados = consultar_site(session["conta"])
-#     return render_template("transferir.html", dados=lista_dados)
-#     # pagina de transferir
-
-
-# @app.route("/home", methods=["GET"])
-# def home():
-#     lista_dados = consultar_transacoes(session["conta"])
-#     return render_template("home.html", transacoes=lista_dados)  # pagina de login
 
 
 @app.route("/cadastro")
@@ -127,7 +116,7 @@ def registrar():
     email = request.form["email"]
     cpf = request.form["cpf"]
     senha = request.form["senha"]
-    if consultar_email(email) == True:
+    if consultar_email(email):
         print("usuario ja existe")
         return render_template("cadastro.html", erro="Email já cadastrado")
     else:
@@ -146,14 +135,11 @@ def tranferir():
     saldo = usuario["saldo"]
 
     if saldo >= valor_a_transferir and saldo > 0:
-        print(
-            transferir_saldo(
-                usuario["id"], conta_a_receber, valor_a_transferir, descricao, saldo
-            )
-        )
-
-        print("transação realizada com sucesso")
+        transferir_saldo(usuario["id"], conta_a_receber, valor_a_transferir, descricao, saldo)
+        novo_usuario = consultar_id(session["conta"])
+        session["saldo"] = f"R$: {novo_usuario['saldo']:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
         return redirect("/home")
+
     else:
         print("transação nao realizada")
         return render_template("transferir.html")

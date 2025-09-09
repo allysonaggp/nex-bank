@@ -11,22 +11,6 @@ import random
 db = SQLAlchemy()
 
 
-# funcao converter data UTC para local
-def converter_utc_para_local(utc_value, fuso_local="America/Sao_Paulo"):
-    # Se já for datetime, usa direto
-    if isinstance(utc_value, datetime):
-        utc_dt = utc_value
-    else:  # se for string, faz o parse
-        utc_dt = datetime.strptime(utc_value, "%Y-%m-%d %H:%M:%S")
-
-    # garantir que está em UTC
-    if utc_dt.tzinfo is None:
-        utc_dt = utc_dt.replace(tzinfo=ZoneInfo("UTC"))
-
-    # converte para o fuso desejado
-    return utc_dt.astimezone(ZoneInfo(fuso_local))
-
-
 class Usuario(db.Model):
     __tablename__ = "usuarios"
     id = db.Column(db.Integer, primary_key=True)
@@ -60,6 +44,26 @@ class Transacao(db.Model):
     )
 
 
+# funcao converter data UTC para local
+def converter_utc_para_local(utc_value, fuso_local="America/Sao_Paulo"):
+    # Se já for datetime, usa direto
+    if isinstance(utc_value, datetime):
+        utc_dt = utc_value
+    else:  # se for string, faz o parse
+        utc_dt = datetime.strptime(utc_value, "%d-%m-%Y às %H:%M")
+
+    # garantir que está em UTC
+    if utc_dt.tzinfo is None:
+        utc_dt = utc_dt.replace(tzinfo=ZoneInfo("UTC"))
+
+    # converte para o fuso desejado
+    local_dt = utc_dt.astimezone(ZoneInfo(fuso_local))
+
+    # retorna como string formatada
+    return local_dt.strftime("%d-%m-%Y às %H:%M")
+
+
+
 # Formatar numero cartão
 def formatar_numero_cartao(numero):
     # Remove qualquer caractere não numérico
@@ -91,31 +95,6 @@ def consultar_conta_site(email, senha):
     return None
 
 
-def consultar_email(email):
-    return Usuario.query.filter_by(email=email).first() is not None
-
-
-def inserir_registro(nome, email, cpf, senha):
-    senha_hash = generate_password_hash(senha)
-    novo_usuario = Usuario(
-        nome=nome,
-        email=email,
-        cpf=cpf,
-        senha=senha_hash,
-        saldo=0.0,
-        credito=0.0,
-        numero_cartao=1234567890123456,
-        validade_cartao="12/30",
-        chave_pix=email,
-        privilegio=0,
-    )
-    db.session.add(novo_usuario)
-    db.session.commit()
-
-
-# Outras funções como transferir_saldo, consultar_transacoes, etc. podem ir aqui também
-
-
 # Funçào consultar cartao site
 def consultar_cartao(cartao):
     usuario = Usuario.query.filter_by(numero_cartao=cartao).first()
@@ -126,8 +105,7 @@ def consultar_cartao(cartao):
 def gerador_numero_cartao():
     numero = []
     for i in range(16):
-        i = random.randrange(0, 9)
-        numero.append(i)
+        numero.append(random.randint(0, 9))
     numero = "".join(str(n) for n in numero)
     # print(f'numero gerado: {numero}')
     return numero
@@ -138,7 +116,7 @@ def criar_cartao_credito():
     verificador = False
     while verificador == False:
         numero = gerador_numero_cartao()
-        if consultar_cartao(numero) == True:
+        if consultar_cartao(numero):
             print("cartao ja cadastrado")
         else:
             # print(f'numero não cadastrado: {numero}')
@@ -191,7 +169,7 @@ def inserir_registro_administrador(senha):
     if total_cadastrados == 0:
         novo_admin = Usuario(
             nome="admin",
-            cpf=00000000000,
+            cpf="00000000000",
             email="admin@nexbank.com",
             senha=senha_hash,
             saldo=150000,
@@ -310,23 +288,3 @@ def consultar_transacoes(minha_conta):
         )
 
     return transacoes_formatadas
-
-
-from sqlalchemy import text
-from dbapi import db
-
-
-def alterar_tipo_coluna_senha():
-    try:
-        with db.engine.connect() as connection:
-            connection.execute(
-                text(
-                    """
-                ALTER TABLE usuarios
-                ALTER COLUMN senha TYPE TEXT;
-            """
-                )
-            )
-            print("✅ Tipo da coluna 'senha' alterado para TEXT com sucesso.")
-    except Exception as e:
-        print(f"❌ Erro ao alterar coluna: {e}")
