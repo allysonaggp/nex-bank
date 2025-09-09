@@ -20,8 +20,8 @@ from dbapi import (
 
 load_dotenv()
 app = Flask(__name__)
-#app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("secret_key_postgres")
-app.config["SQLALCHEMY_DATABASE_URI"] = ("sqlite:///nexbank_local.db")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("secret_key_postgres")
+# app.config["SQLALCHEMY_DATABASE_URI"] = ("sqlite:///nexbank_local.db")
 
 app.secret_key = os.getenv("secret_key")  # Chave secreta para sessões
 db.init_app(app)
