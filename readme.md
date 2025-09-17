@@ -1,41 +1,59 @@
 ## 🏦 NexBank
 
-**NexBank** é um sistema bancário em **Python**, que simula funcionalidades de um banco real, incluindo cadastro, login, gerenciamento de usuários, transações financeiras e histórico de movimentações.
+**NexBank** é uma aplicação bancária digital desenvolvida com foco em escalabilidade, segurança e experiência do usuário. O projeto simula operações reais de um sistema financeiro, oferecendo funcionalidades como cadastro de clientes, autenticação segura, transferências entre contas, histórico de transações.
 
-O sistema utiliza **SQLite** para persistência de dados e implementa **hash de senhas** para segurança.
+Construído com **Python** e utilizando **SQLAlchemy** como ORM, o NexBank integra-se a um banco de dados **PostgreSQL** para garantir robustez e confiabilidade na persistência dos dados. A interface web, desenvolvida em **HTML e CSS**, é totalmente **responsiva**, permitindo acesso fluido tanto em dispositivos móveis quanto em desktops.
 
---- Projeto em Desenvolvimento ---
+Além disso, o sistema implementa práticas modernas de segurança, como o uso de **hashes criptográficos com `werkzeug.security`**, protegendo as credenciais dos usuários e reforçando a integridade da aplicação.
+
+> Este projeto é ideal para fins educacionais, demonstrações técnicas ou como base para soluções bancárias mais complexas.
+
+
+> 🚧 Projeto em desenvolvimento
+
 
 
 ## 🚀 Funcionalidades
-
-✅ Tela de login
-
-![alt text](/fotos/login.png)
-
-✅ Tela de cadastro
-
-![alt text](/fotos/cadastro.png)
-
-✅ Tela de interface
-
-![alt text](/fotos/home.png)
-
-✅ Tela de Transferência
-
-![alt text](/fotos/transferencia.png)
-
-✅ Tela de interface responsiva
-
-![alt text](/fotos/resposividade.png)
+- Cadastro e login de usuários com criptografia segura  
+- Interface web responsiva (desktop e mobile)  
+- Transferência entre contas  
+- Histórico de transações  
+- Painel administrativo com controle de usuários  
+- Criação automática de administrador padrão
 
 ---
 
+## 🛠 Tecnologias Utilizadas
+
+| Camada         | Tecnologias                          |
+|----------------|--------------------------------------|
+| Backend        | Python, SQLAlchemy, PostgreSQL       |
+| Segurança      | `werkzeug.security` (hash de senhas) |
+| Frontend       | HTML, CSS                            |
+| Interface Web  | Flask (se estiver usando)            |
+
+---
+
+## 📱 Interface Responsiva
+
+A interface foi projetada com foco em **usabilidade e acessibilidade**, adaptando-se a diferentes tamanhos de tela:
+
+- Compatível com **desktops**, **notebooks**, **tablets** e **smartphones**
+- Layout adaptativo com CSS moderno
+- Navegação fluida e intuitiva
+
+---
+
+## 🔐 Segurança
+
+- As senhas dos usuários são protegidas com **hashes gerados pelo `werkzeug.security`**, garantindo que nenhuma senha seja armazenada em texto plano.
+- Recomenda-se alterar a senha do administrador padrão após o primeiro login.
+
+---
 ## 🧑‍💻 Primeiro Administrador
 
 O primeiro administrador é criado automaticamente com os seguintes dados:
 
-* **Nome:** admin
 * **Email:** admin\@nexbank.com
 * **Senha:** admin
 
@@ -43,13 +61,7 @@ O primeiro administrador é criado automaticamente com os seguintes dados:
 
 ---
 
-## 🛠 Tecnologias
 
-* Python 3.x
-* SQLite
-* Biblioteca `hashlib` para hash de senhas
-
----
 
 ## ⚡ Como Rodar
 
@@ -75,9 +87,30 @@ python main.py
 
 ---
 
-## 🔒 Segurança
 
-* Senhas armazenadas em **hash SHA-256**, garantindo que não fiquem em texto plano no banco de dados.
+✅ Tela de login
+
+![alt text](/fotos/login.png)
+
+✅ Tela de cadastro
+
+![alt text](/fotos/cadastro.png)
+
+✅ Tela de interface
+
+![alt text](/fotos/home.png)
+
+✅ Tela de Transferência
+
+![alt text](/fotos/transferencia.png)
+
+✅ Tela de interface responsiva
+
+![alt text](/fotos/resposividade.png)
 
 ---
+
+
+
+
 
