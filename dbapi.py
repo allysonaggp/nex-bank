@@ -15,7 +15,7 @@ class Usuario(db.Model):
     __tablename__ = "usuarios"
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100))
-    cpf = db.Column(db.String(11))
+    cpf = db.Column(db.Text)
     email = db.Column(db.String(150))
     senha = db.Column(db.Text)
     saldo = db.Column(db.Float)
@@ -24,6 +24,7 @@ class Usuario(db.Model):
     validade_cartao = db.Column(db.String(5))
     chave_pix = db.Column(db.String(50))
     privilegio = db.Column(db.Integer)
+    data = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class Transacao(db.Model):
@@ -147,7 +148,7 @@ def inserir_registro(nome, email, cpf, senha):
         credito=credito_inicial,
         privilegio=0,
         numero_cartao=cartao,
-        validade_cartao=validade_cartao,
+        validade_cartao=validade_cartao,    
     )
 
     try:

@@ -141,7 +141,7 @@ def tranferir():
         return redirect("/home")
 
     else:
-        print("transação nao realizada")
+        print("transação nao realizada por falta de saldo")
         return render_template("transferir.html")
 
 
@@ -153,4 +153,4 @@ def logout():
 
 if __name__ == "__main__":
     iniciar()
-    app.run(debug=True)
+    app.run(debug=False)
