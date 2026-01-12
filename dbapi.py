@@ -137,15 +137,15 @@ def inserir_registro(nome, email, cpf, senha):
     validade_cartao = "09/32"
     senha_hash = generate_password_hash(senha)
 
-    credito_inicial = 300 if total_cadastrados <= 5 else 0
+    credito_inicial = 100 if total_cadastrados <= 300 else 0
 
     novo_usuario = Usuario(
         nome=nome,
         email=email,
         cpf=cpf,
         senha=senha_hash,
-        saldo=0,
-        credito=credito_inicial,
+        saldo=credito_inicial,
+        credito=0,
         privilegio=0,
         numero_cartao=cartao,
         validade_cartao=validade_cartao,    
