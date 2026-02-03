@@ -27,9 +27,9 @@ Além disso, o sistema implementa práticas modernas de segurança, como o uso d
 
 | Camada         | Tecnologias                          |
 |----------------|--------------------------------------|
-| Backend        | Python, SQLAlchemy, PostgreSQL       |
+| Backend        | Python, Flask, SQLAlchemy, PostgreSQL       |
 | Segurança      | `werkzeug.security` (hash de senhas) |
-| Frontend       | HTML, CSS                            |
+| Frontend       | HTML, CSS ,JavaSxcript                            |
 | Interface Web  | Flask (se estiver usando)            |
 
 ---
@@ -80,7 +80,7 @@ cd NexBank
 3. Execute o arquivo principal:
 
 ```bash
-python main.py
+python app.py
 ```
 
 4. Use o menu para login, cadastro ou acessar funcionalidades de administrador.
